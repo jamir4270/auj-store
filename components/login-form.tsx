@@ -48,7 +48,7 @@ export function LoginForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex h-full flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
@@ -96,6 +96,15 @@ export function LoginForm({
           </form>
         </CardContent>
       </Card>
+      <footer>
+        <div className="flex flex-row gap-1 w-full items-center justify-center">
+          Credits to
+          <Link href="https://github.com/jamir4270" className="underline">
+            {" "}
+            jamir4270
+          </Link>
+        </div>
+      </footer>
     </div>
   );
 }
