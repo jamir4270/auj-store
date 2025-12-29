@@ -1,5 +1,4 @@
 import { Product, Order, OrderItem, PrintJob } from "./models";
-import { ProductStatus } from "./models";
 import { createClient } from "./supabase/server";
 
 export async function fetchProducts() {
