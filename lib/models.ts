@@ -45,7 +45,7 @@ export interface OrderItem {
   created_at: string;
 }
 
-export interface print_job {
+export interface PrintJob {
   id: string;
   order_id: string;
   service_type: PrintServiceType;
