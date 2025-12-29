@@ -8,6 +8,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarHeader,
 } from "@/components/ui/sidebar";
 
 import { LucideIcon, LogOut } from "lucide-react";
@@ -26,6 +27,18 @@ type SidebarProps = {
 export function AppSidebar({ routes }: SidebarProps) {
   return (
     <Sidebar variant="sidebar" collapsible="icon">
+      <SidebarHeader className="border-y-2 border-accent">
+        <SidebarContent>
+          <div className="flex items-center justify-center py-4 font-bold transition-all group-data-[state=collapsed]:py-2">
+            <span className="whitespace-nowrap group-data-[state=collapsed]:hidden">
+              AUJ Store Management
+            </span>
+            <span className="hidden group-data-[state=collapsed]:block">
+              AUJ
+            </span>
+          </div>
+        </SidebarContent>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
