@@ -10,6 +10,7 @@ import {
 import AddProduct from "./_components/add-product";
 import { fetchProducts } from "@/lib/data";
 import { Product } from "@/lib/models";
+import { twoDecimal } from "@/lib/utils";
 
 export default async function Inventory() {
   const products: Product[] = (await fetchProducts()) ?? [];
@@ -45,7 +46,7 @@ export default async function Inventory() {
               <CardTitle className="text-2xl">Total Asset Value</CardTitle>
             </CardHeader>
             <CardContent className="py-0 items-center justify-center">
-              <p className="text-3xl">{`₱ ${total_asset_value}`}</p>
+              <p className="text-3xl">{`₱ ${twoDecimal(total_asset_value)}`}</p>
             </CardContent>
           </Card>
 
