@@ -1,6 +1,7 @@
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -9,7 +10,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-import { LucideIcon } from "lucide-react";
+import { LucideIcon, LogOut } from "lucide-react";
+import Link from "next/link";
 
 export type SidebarProp = {
   title: string;
@@ -23,7 +25,7 @@ type SidebarProps = {
 
 export function AppSidebar({ routes }: SidebarProps) {
   return (
-    <Sidebar variant="floating" collapsible="icon">
+    <Sidebar variant="sidebar" collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
@@ -32,10 +34,10 @@ export function AppSidebar({ routes }: SidebarProps) {
               {routes.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -43,6 +45,19 @@ export function AppSidebar({ routes }: SidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            className="w-full items-center justify-center bg-primary text-primary-foreground shadow hover:bg-primary/90"
+            asChild
+          >
+            <Link href="/">
+              <LogOut />
+              <span>Log out</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarFooter>
     </Sidebar>
   );
 }

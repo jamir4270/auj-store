@@ -51,12 +51,7 @@ export default async function ProtectedLayout({
   return (
     <SidebarProvider>
       <AppSidebar routes={routes} />
-      {/* MOVED: SidebarTrigger was here, causing it to be hidden. 
-         We move it inside SidebarInset below.
-      */}
-
       <SidebarInset>
-        {/* ADDED: A header to hold the trigger */}
         <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger />
         </header>
