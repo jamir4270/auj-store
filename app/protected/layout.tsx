@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   SidebarTrigger,
@@ -14,6 +15,8 @@ import {
   ReceiptText,
   Warehouse,
 } from "lucide-react";
+
+export const dynamic = "force-dynamic";
 
 export default async function ProtectedLayout({
   children,
@@ -48,8 +51,11 @@ export default async function ProtectedLayout({
     },
   ];
 
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar routes={routes} />
       <SidebarInset>
         <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
