@@ -6,6 +6,7 @@ import {
   SidebarInset,
 } from "@/components/ui/sidebar";
 import { SidebarProp } from "@/components/app-sidebar";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import "../globals.css";
 
 import {
@@ -61,7 +62,7 @@ export default async function ProtectedLayout({
         <header className="flex flex-row justify-between w-full h-14 shrink-0 items-center border-b px-4">
           <SidebarTrigger />
           <div className="font-bold">AUJ Store Management</div>
-          <div></div>
+          <ThemeSwitcher />
         </header>
 
         <main className="flex w-full h-full flex-col gap-4 p-4">

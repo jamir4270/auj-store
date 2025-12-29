@@ -17,17 +17,15 @@ export default function AddProduct() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline">
+        <Button variant="default">
           <CirclePlusIcon />
           <p>Add Product</p>
         </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Edit profile</SheetTitle>
-          <SheetDescription>
-            Make changes to your profile here. Click save when you&apos;re done.
-          </SheetDescription>
+          <SheetTitle>Add Product</SheetTitle>
+          <SheetDescription>Add Product to Inventory</SheetDescription>
         </SheetHeader>
         <div className="grid flex-1 auto-rows-min gap-6 px-4">
           <div className="grid gap-3">
@@ -40,7 +38,7 @@ export default function AddProduct() {
           </div>
         </div>
         <SheetFooter>
-          <Button type="submit">Save changes</Button>
+          <Button type="submit">Add Product</Button>
           <SheetClose asChild>
             <Button variant="outline">Close</Button>
           </SheetClose>

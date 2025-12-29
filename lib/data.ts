@@ -1,5 +1,5 @@
 import { Product, Order, OrderItem, PrintJob } from "./models";
-
+import { ProductStatus } from "./models";
 import { createClient } from "./supabase/server";
 
 export async function fetchProducts() {
@@ -12,7 +12,19 @@ export async function fetchProducts() {
       throw error;
     }
 
-    return data as Product[];
+    const products: Product[] = data.map((item) => {
+      return {
+        ...item,
+        status:
+          item.quantity >= item.stock_threshhold
+            ? "in_stock"
+            : item.quantity < item.stock_threshhold && item.quantity != 0
+            ? "low_stock"
+            : "out_of_stock",
+      };
+    });
+
+    return products;
   } catch (error) {
     if (error instanceof Error) {
       console.log("Failed to fetch products: ", error.message);

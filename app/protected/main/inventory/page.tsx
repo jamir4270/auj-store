@@ -8,9 +8,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import AddProduct from "./_components/add-product";
+import { fetchProducts } from "@/lib/data";
+import { Product } from "@/lib/models";
 
 export default async function Inventory() {
-  //const products: Product[] = (await fetchProducts()) ?? [];
+  const products: Product[] = (await fetchProducts()) ?? [];
+
+  let total_asset_value = 0;
+
+  for (const product of products) {
+    total_asset_value += product.price * product.quantity;
+  }
 
   return (
     <div className="flex flex-col p-3 py-0 h-full w-full">
@@ -26,7 +34,7 @@ export default async function Inventory() {
               <CardTitle className="text-2xl">Total Asset Value</CardTitle>
             </CardHeader>
             <CardContent className="py-0 items-center justify-center">
-              <p className="text-3xl">{`₱100,000`}</p>
+              <p className="text-3xl">{`₱ ${total_asset_value}`}</p>
             </CardContent>
           </Card>
 

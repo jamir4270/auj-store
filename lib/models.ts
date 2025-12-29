@@ -16,11 +16,14 @@ export type PrintPaperSizeType =
   | "4r"
   | "5r";
 export type PrintColorMode = "b&w" | "color";
+export type ProductStatus = "in_stock" | "low_stock" | "out_of_stock";
 
 export interface Product {
   id: string;
   name: string;
   quantity: number;
+  status: ProductStatus;
+  stock_threshhold: number;
   price: number;
   category: ProductCategory;
   created_at: string;
