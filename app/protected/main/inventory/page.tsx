@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import AddProduct from "./_components/add-product";
 
 export default async function Inventory() {
   //const products: Product[] = (await fetchProducts()) ?? [];
@@ -14,7 +15,11 @@ export default async function Inventory() {
   return (
     <div className="flex flex-col p-3 py-0 h-full w-full">
       <div className="flex flex-col gap-3 h-full">
-        <div className="text-3xl font-bold">Inventory</div>
+        <div className="flex flex-row justify-between">
+          <div className="text-3xl font-bold">Inventory</div>
+          <AddProduct />
+        </div>
+
         <div className="flex flex-row">
           <Card className="flex-1 rounded-r-none">
             <CardHeader className="pb-3">
