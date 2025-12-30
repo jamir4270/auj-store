@@ -1,19 +1,9 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Product, ProductStatus, ProductCategory } from "@/lib/models";
+import { Product } from "@/lib/models";
 import { twoDecimal } from "@/lib/utils";
-import { MoreHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import EditProduct, { AddStock } from "./raw-actions";
+import EditProduct, { AddStock, DeleteProduct } from "./raw-actions";
 
 function setStatusClor(status: string) {
   if (status === "In Stock") {
@@ -69,13 +59,15 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     id: "actions",
+    header: "Actions",
     cell: ({ row }) => {
       const data = row.original;
 
       return (
         <div className="flex flex-row gap-2">
-          <EditProduct product={data} />
           <AddStock product={data} />
+          <EditProduct product={data} />
+          <DeleteProduct product={data} />
         </div>
       );
     },

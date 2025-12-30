@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Edit, PlusIcon, DeleteIcon } from "lucide-react";
+import { Edit, PlusIcon, Trash2 } from "lucide-react";
 import {
   Sheet,
   SheetClose,
@@ -46,7 +46,7 @@ export default function EditProduct({ product }: ProductActionsProp) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" className="p-1">
+        <Button variant="outline" className="p-1">
           <Edit />
         </Button>
       </SheetTrigger>
@@ -81,7 +81,7 @@ export function AddStock({ product }: ProductActionsProp) {
     <Dialog>
       <form>
         <DialogTrigger asChild>
-          <Button variant="ghost" className="p-1">
+          <Button variant="default" className="bg-green-400">
             <PlusIcon />
           </Button>
         </DialogTrigger>
@@ -120,8 +120,8 @@ export function DeleteProduct({ product }: ProductActionsProp) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive">
-          <DeleteIcon />
+        <Button variant="destructive" className="p-1">
+          <Trash2 />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -134,7 +134,9 @@ export function DeleteProduct({ product }: ProductActionsProp) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
+          <AlertDialogAction className="bg-red-500 text-white">
+            Continue
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
