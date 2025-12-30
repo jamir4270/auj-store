@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CirclePlusIcon } from "lucide-react";
+import { Edit, EditIcon } from "lucide-react";
 import {
   Sheet,
   SheetClose,
@@ -13,24 +13,29 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-export default function AddNewProduct() {
+import { Product } from "@/lib/models";
+
+type ProductActionsProp = {
+  product: Product;
+};
+
+export default function EditProduct({ product }: ProductActionsProp) {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="default">
-          <CirclePlusIcon />
-          <p>Add New Product</p>
+        <Button variant="ghost" className="p-1">
+          <Edit />
         </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add New Product</SheetTitle>
-          <SheetDescription>Add new product to inventory</SheetDescription>
+          <SheetTitle>Edit Product: {product.name}</SheetTitle>
+          <SheetDescription>Edit {product.name} in inventory</SheetDescription>
         </SheetHeader>
         <div className="grid flex-1 auto-rows-min gap-6 px-4">
           <div className="grid gap-3">
             <Label htmlFor="sheet-demo-name">Name</Label>
-            <Input id="sheet-demo-name" defaultValue="Pedro Duarte" />
+            <Input id="sheet-demo-name" defaultValue={product.name} />
           </div>
           <div className="grid gap-3">
             <Label htmlFor="sheet-demo-username">Username</Label>
@@ -38,7 +43,7 @@ export default function AddNewProduct() {
           </div>
         </div>
         <SheetFooter>
-          <Button type="submit">Add Product</Button>
+          <Button type="submit">Confirm</Button>
           <SheetClose asChild>
             <Button variant="outline">Close</Button>
           </SheetClose>

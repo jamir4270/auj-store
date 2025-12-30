@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import AddProduct from "./_components/add-product";
+import AddNewProduct from "./_components/add-product";
 import { fetchProducts } from "@/lib/data";
 import { Product } from "@/lib/models";
 import { twoDecimal } from "@/lib/utils";
@@ -37,7 +37,7 @@ export default async function Inventory() {
       <div className="flex flex-col gap-3 h-full">
         <div className="flex flex-row justify-between">
           <div className="text-3xl font-bold">Inventory</div>
-          <AddProduct />
+          <AddNewProduct />
         </div>
 
         <div className="flex flex-row">

@@ -3,6 +3,17 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Product, ProductStatus, ProductCategory } from "@/lib/models";
 import { twoDecimal } from "@/lib/utils";
+import { MoreHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import EditProduct from "./raw-actions";
 
 function setStatusClor(status: string) {
   if (status === "In Stock") {
@@ -54,6 +65,18 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       const value = twoDecimal(row.getValue("price"));
       return value;
+    },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const data = row.original;
+
+      return (
+        <div className="flex flex-row gap-2 justify-between">
+          <EditProduct product={data} />
+        </div>
+      );
     },
   },
 ];
