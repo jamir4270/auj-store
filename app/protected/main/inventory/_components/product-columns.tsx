@@ -2,6 +2,17 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Product, ProductStatus, ProductCategory } from "@/lib/models";
+import { twoDecimal } from "@/lib/utils";
+
+function setStatusClor(status: string) {
+  if (status === "In Stock") {
+    return "text-green-400";
+  } else if (status === "Low Stock") {
+    return "text-orange-400";
+  } else {
+    return "text-red-500";
+  }
+}
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -10,7 +21,7 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "category",
-    header: "Categort",
+    header: "Category",
   },
   {
     accessorKey: "quantity",
@@ -19,6 +30,30 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "status",
     header: "Status",
+    cell: ({ row }) => {
+      const status = () => {
+        const value = row.getValue("status");
+        if (value === "in_stock") {
+          return "In Stock" as string;
+        } else if (value === "low_stock") {
+          return "Low Stock" as string;
+        } else if (value === "out_of_stock") {
+          return "Out of Stock" as string;
+        } else {
+          return "NaN" as string;
+        }
+      };
+
+      const statusText = status();
+      return <div className={setStatusClor(statusText)}>{statusText}</div>;
+    },
   },
-  { accessorKey: "price", header: "Price" },
+  {
+    accessorKey: "price",
+    header: "Price",
+    cell: ({ row }) => {
+      const value = twoDecimal(row.getValue("price"));
+      return value;
+    },
+  },
 ];
