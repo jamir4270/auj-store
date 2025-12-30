@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-export async function fetchProductsColumn(column: string) {
+export async function fetchCategories() {
   try {
     const supabase = await createClient();
 
@@ -14,10 +14,10 @@ export async function fetchProductsColumn(column: string) {
       throw error;
     }
 
-    return data;
+    return data as [];
   } catch (error) {
     if (error) {
-      console.log(`Failed to fetch ${column}: `, error);
+      console.log(`Failed to fetch categories: `, error);
     }
   }
 }

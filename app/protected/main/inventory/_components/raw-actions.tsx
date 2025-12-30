@@ -39,7 +39,6 @@ import {
 import { Product } from "@/lib/models";
 import { addStock } from "../actions";
 import { toast } from "sonner";
-import { fetchProductsColumn } from "../data";
 type ProductActionsProp = {
   product: Product;
 };
@@ -112,10 +111,6 @@ export function AddStock({ product }: ProductActionsProp) {
 }
 
 export function EditProduct({ product }: ProductActionsProp) {
-  async function handleFetchColumns() {
-    const data = await fetchProductsColumn("category");
-    console.log(data);
-  }
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -134,14 +129,18 @@ export function EditProduct({ product }: ProductActionsProp) {
               </SheetDescription>
             </SheetHeader>
 
-            <div className="flex-1 flex flex-col gap-6 px-4 py-6">
+            <div className="flex-1 flex flex-col justify-between px-4 py-6">
               <div className="flex flex-col gap-3">
                 <Label htmlFor="name">Name</Label>
                 <Input type="string" id="name" defaultValue={product.name} />
               </div>
               <div className="flex flex-col gap-3">
-                <Label htmlFor="name">Name</Label>
-                <Input type="string" id="name" defaultValue={product.name} />
+                <Label htmlFor="category">Category</Label>
+                <Input
+                  type="string"
+                  id="category"
+                  defaultValue={product.category}
+                />
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="quantity">Stock</Label>
@@ -156,6 +155,7 @@ export function EditProduct({ product }: ProductActionsProp) {
                 <Label htmlFor="cost">Cost</Label>
                 <Input
                   type="number"
+                  step="0.01"
                   id="cost"
                   defaultValue={product.cost}
                   min={1}
@@ -165,6 +165,7 @@ export function EditProduct({ product }: ProductActionsProp) {
                 <Label htmlFor="price">Price</Label>
                 <Input
                   type="number"
+                  step="0.01"
                   id="price"
                   defaultValue={product.price}
                   min={1}
@@ -181,13 +182,6 @@ export function EditProduct({ product }: ProductActionsProp) {
               </div>
             </div>
             <SheetFooter className="flex">
-              <Button
-                onClick={() => {
-                  handleFetchColumns();
-                }}
-              >
-                Fetch
-              </Button>
               <Button type="submit">Confirm</Button>
               <SheetClose asChild>
                 <Button variant="outline">Close</Button>
