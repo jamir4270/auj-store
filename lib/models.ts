@@ -28,6 +28,7 @@ export interface Product {
   price: number;
   category: ProductCategory;
   created_at: string;
+  updated_at: string;
 }
 
 export interface Order {

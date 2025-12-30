@@ -49,33 +49,11 @@ export function AddStock({ product }: ProductActionsProp) {
     const amount = parseInt(formData.get("stock") as string);
 
     if (amount && amount > 0) {
-      const status = await addStock(product, amount);
       toast.promise(addStock(product, amount), {
         loading: "Adding stock to product...",
         success: "Successfully added stock to product!",
         error: "Failed to add stock to product.",
       });
-      console.log(status);
-      /*if (status === 204) {
-        toast.success("Successfully added new stock to product!", {
-          style: {
-            "--normal-bg":
-              "light-dark(var(--color-green-600), var(--color-green-400))",
-            "--normal-text": "var(--color-white)",
-            "--normal-border":
-              "light-dark(var(--color-green-600), var(--color-green-400))",
-          } as React.CSSProperties,
-        });
-      } else {
-        toast.error("Failed to add stock to product.", {
-          style: {
-            "--normal-bg":
-              "light-dark(var(--destructive), color-mix(in oklab, var(--destructive) 60%, var(--background)))",
-            "--normal-text": "var(--color-white)",
-            "--normal-border": "transparent",
-          } as React.CSSProperties,
-        });
-      }*/
     } else {
       console.error("Invalid input: ", amount);
       toast.error("Invalid input!", {
@@ -96,17 +74,16 @@ export function AddStock({ product }: ProductActionsProp) {
           <PlusIcon />
         </Button>
       </DialogTrigger>
-
       <DialogContent className="sm:max-w-[425px]">
-        <form action={handleAddStockSubmit}>
+        <form action={handleAddStockSubmit} className="flex flex-col gap-5">
           <DialogHeader>
             <DialogTitle>Add {product.name} Stock</DialogTitle>
             <DialogDescription>
               Add stock to existing products in inventory.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-3">
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-3">
               <Label htmlFor="stock">Quantity</Label>
               <Input
                 id="stock"
@@ -123,7 +100,9 @@ export function AddStock({ product }: ProductActionsProp) {
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit">Confirm</Button>
+              <Button type="submit" onClick={() => handleAddStockSubmit}>
+                Confirm
+              </Button>
             </DialogFooter>
           </div>
         </form>
@@ -141,26 +120,30 @@ export function EditProduct({ product }: ProductActionsProp) {
         </Button>
       </SheetTrigger>
       <SheetContent>
-        <SheetHeader>
-          <SheetTitle>Edit Product: {product.name}</SheetTitle>
-          <SheetDescription>Edit {product.name} in inventory</SheetDescription>
-        </SheetHeader>
-        <div className="grid flex-1 auto-rows-min gap-6 px-4">
-          <div className="grid gap-3">
-            <Label htmlFor="sheet-demo-name">Name</Label>
-            <Input id="sheet-demo-name" defaultValue={product.name} />
+        <form action="">
+          <SheetHeader>
+            <SheetTitle>Edit Product: {product.name}</SheetTitle>
+            <SheetDescription>
+              Edit {product.name} in inventory
+            </SheetDescription>
+          </SheetHeader>
+          <div className="grid flex-1 auto-rows-min gap-6 px-4">
+            <div className="grid gap-3">
+              <Label htmlFor="sheet-demo-name">Name</Label>
+              <Input id="sheet-demo-name" defaultValue={product.name} />
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="sheet-demo-username">Username</Label>
+              <Input id="sheet-demo-username" defaultValue="@peduarte" />
+            </div>
           </div>
-          <div className="grid gap-3">
-            <Label htmlFor="sheet-demo-username">Username</Label>
-            <Input id="sheet-demo-username" defaultValue="@peduarte" />
-          </div>
-        </div>
-        <SheetFooter>
-          <Button type="submit">Confirm</Button>
-          <SheetClose asChild>
-            <Button variant="outline">Close</Button>
-          </SheetClose>
-        </SheetFooter>
+          <SheetFooter>
+            <Button type="submit">Confirm</Button>
+            <SheetClose asChild>
+              <Button variant="outline">Close</Button>
+            </SheetClose>
+          </SheetFooter>
+        </form>
       </SheetContent>
     </Sheet>
   );
