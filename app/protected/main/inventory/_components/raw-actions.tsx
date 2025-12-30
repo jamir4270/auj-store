@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Edit, PlusIcon } from "lucide-react";
+import { Edit, PlusIcon, DeleteIcon } from "lucide-react";
 import {
   Sheet,
   SheetClose,
@@ -23,6 +23,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 import { Product } from "@/lib/models";
 
@@ -106,38 +118,25 @@ export function AddStock({ product }: ProductActionsProp) {
 
 export function DeleteProduct({ product }: ProductActionsProp) {
   return (
-    <Dialog>
-      <form>
-        <DialogTrigger asChild>
-          <Button variant="destructive" className="p-1">
-            <PlusIcon />
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Delete Product: {product.name}</DialogTitle>
-            <DialogDescription>Delete product in inventory.</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-3">
-              <Label htmlFor="name-1">Quantity</Label>
-              <Input
-                id="name-1"
-                name="name"
-                type="number"
-                defaultValue={1}
-                min={1}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button type="submit">Confirm</Button>
-          </DialogFooter>
-        </DialogContent>
-      </form>
-    </Dialog>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="destructive">
+          <DeleteIcon />
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete {product.name}?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete the
+            product and remove the data from the server.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction>Continue</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
