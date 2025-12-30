@@ -3,7 +3,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Product } from "@/lib/models";
 import { twoDecimal } from "@/lib/utils";
-import EditProduct, { AddStock, DeleteProduct } from "./raw-actions";
+import { EditProduct, AddStock, DeleteProduct } from "./raw-actions";
+import { ArrowUpDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 function setStatusClor(status: string) {
   if (status === "In Stock") {
@@ -18,7 +20,17 @@ function setStatusClor(status: string) {
 export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "name",
-    header: "Name",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
   },
   {
     accessorKey: "category",
@@ -26,7 +38,23 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "quantity",
-    header: "Stock",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="p-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Stock
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const product = row.original;
+
+      return <div className="text-center">{product.quantity}</div>;
+    },
   },
   {
     accessorKey: "status",
@@ -51,10 +79,21 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "price",
-    header: "Price",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="p-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Price
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const value = twoDecimal(row.getValue("price"));
-      return value;
+      return <div className="text-center">{value}</div>;
     },
   },
   {

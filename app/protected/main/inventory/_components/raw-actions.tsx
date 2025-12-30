@@ -42,7 +42,7 @@ type ProductActionsProp = {
   product: Product;
 };
 
-export default function EditProduct({ product }: ProductActionsProp) {
+export function EditProduct({ product }: ProductActionsProp) {
   return (
     <Sheet>
       <SheetTrigger asChild>
