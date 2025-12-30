@@ -39,7 +39,7 @@ import {
 import { Product } from "@/lib/models";
 import { addStock } from "../actions";
 import { toast } from "sonner";
-
+import { fetchProductsColumn } from "../data";
 type ProductActionsProp = {
   product: Product;
 };
@@ -112,6 +112,10 @@ export function AddStock({ product }: ProductActionsProp) {
 }
 
 export function EditProduct({ product }: ProductActionsProp) {
+  async function handleFetchColumns() {
+    const data = await fetchProductsColumn("category");
+    console.log(data);
+  }
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -119,30 +123,77 @@ export function EditProduct({ product }: ProductActionsProp) {
           <Edit />
         </Button>
       </SheetTrigger>
-      <SheetContent>
-        <form action="">
-          <SheetHeader>
-            <SheetTitle>Edit Product: {product.name}</SheetTitle>
-            <SheetDescription>
-              Edit {product.name} in inventory
-            </SheetDescription>
-          </SheetHeader>
-          <div className="grid flex-1 auto-rows-min gap-6 px-4">
-            <div className="grid gap-3">
-              <Label htmlFor="sheet-demo-name">Name</Label>
-              <Input id="sheet-demo-name" defaultValue={product.name} />
+
+      <SheetContent className="h-full">
+        <form action="" className="h-full">
+          <div className="h-full flex flex-col">
+            <SheetHeader>
+              <SheetTitle>Edit Product: {product.name}</SheetTitle>
+              <SheetDescription>
+                Edit {product.name} in inventory
+              </SheetDescription>
+            </SheetHeader>
+
+            <div className="flex-1 flex flex-col gap-6 px-4 py-6">
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="name">Name</Label>
+                <Input type="string" id="name" defaultValue={product.name} />
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="name">Name</Label>
+                <Input type="string" id="name" defaultValue={product.name} />
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="quantity">Stock</Label>
+                <Input
+                  type="number"
+                  id="quantity"
+                  defaultValue={product.quantity}
+                  min={1}
+                />
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="cost">Cost</Label>
+                <Input
+                  type="number"
+                  id="cost"
+                  defaultValue={product.cost}
+                  min={1}
+                />
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="price">Price</Label>
+                <Input
+                  type="number"
+                  id="price"
+                  defaultValue={product.price}
+                  min={1}
+                />
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="quantity">Stock Threshhold</Label>
+                <Input
+                  type="number"
+                  id="quantity"
+                  defaultValue={product.stock_threshhold}
+                  min={1}
+                />
+              </div>
             </div>
-            <div className="grid gap-3">
-              <Label htmlFor="sheet-demo-username">Username</Label>
-              <Input id="sheet-demo-username" defaultValue="@peduarte" />
-            </div>
+            <SheetFooter className="flex">
+              <Button
+                onClick={() => {
+                  handleFetchColumns();
+                }}
+              >
+                Fetch
+              </Button>
+              <Button type="submit">Confirm</Button>
+              <SheetClose asChild>
+                <Button variant="outline">Close</Button>
+              </SheetClose>
+            </SheetFooter>
           </div>
-          <SheetFooter>
-            <Button type="submit">Confirm</Button>
-            <SheetClose asChild>
-              <Button variant="outline">Close</Button>
-            </SheetClose>
-          </SheetFooter>
         </form>
       </SheetContent>
     </Sheet>
