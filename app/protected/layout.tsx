@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { AppSidebar } from "@/components/app-sidebar";
+import { Toaster } from "@/components/ui/sonner";
 import {
   SidebarTrigger,
   SidebarProvider,
@@ -67,6 +68,7 @@ export default async function ProtectedLayout({
 
         <main className="flex w-full h-full flex-col gap-4 p-4">
           {children}
+          <Toaster position="top-center" />
         </main>
       </SidebarInset>
     </SidebarProvider>

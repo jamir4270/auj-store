@@ -38,6 +38,7 @@ import {
 
 import { Product } from "@/lib/models";
 import { addStock } from "../actions";
+import { toast } from "sonner";
 
 type ProductActionsProp = {
   product: Product;
@@ -48,9 +49,43 @@ export function AddStock({ product }: ProductActionsProp) {
     const amount = parseInt(formData.get("stock") as string);
 
     if (amount && amount > 0) {
-      await addStock(product, amount);
+      const status = await addStock(product, amount);
+      toast.promise(addStock(product, amount), {
+        loading: "Adding stock to product...",
+        success: "Successfully added stock to product!",
+        error: "Failed to add stock to product.",
+      });
+      console.log(status);
+      /*if (status === 204) {
+        toast.success("Successfully added new stock to product!", {
+          style: {
+            "--normal-bg":
+              "light-dark(var(--color-green-600), var(--color-green-400))",
+            "--normal-text": "var(--color-white)",
+            "--normal-border":
+              "light-dark(var(--color-green-600), var(--color-green-400))",
+          } as React.CSSProperties,
+        });
+      } else {
+        toast.error("Failed to add stock to product.", {
+          style: {
+            "--normal-bg":
+              "light-dark(var(--destructive), color-mix(in oklab, var(--destructive) 60%, var(--background)))",
+            "--normal-text": "var(--color-white)",
+            "--normal-border": "transparent",
+          } as React.CSSProperties,
+        });
+      }*/
     } else {
       console.error("Invalid input: ", amount);
+      toast.error("Invalid input!", {
+        style: {
+          "--normal-bg":
+            "light-dark(var(--destructive), color-mix(in oklab, var(--destructive) 60%, var(--background)))",
+          "--normal-text": "var(--color-white)",
+          "--normal-border": "transparent",
+        } as React.CSSProperties,
+      });
     }
   }
 
@@ -149,7 +184,10 @@ export function DeleteProduct({ product }: ProductActionsProp) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction className="bg-red-500 text-white">
+          <AlertDialogAction
+            className="bg-red-500 text-white"
+            onClick={() => {}}
+          >
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>

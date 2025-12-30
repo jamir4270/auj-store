@@ -10,17 +10,20 @@ export async function addStock(product: Product, amount: number) {
 
     const newQuantity = product.quantity + amount;
 
-    const { error } = await supabase
+    const { status, error } = await supabase
       .from("products")
       .update({ quantity: newQuantity })
       .match({ id: product.id });
 
-    throw error;
+    if (error) {
+      throw error;
+    }
+
+    revalidatePath("/protected/inventory");
+    return status;
   } catch (error) {
     if (error) {
       console.error("Failed to update products table: ", error);
     }
   }
-
-  revalidatePath("/protected/inventory");
 }
