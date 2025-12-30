@@ -9,10 +9,11 @@ export async function addStock(product: Product, amount: number) {
     const supabase = await createClient();
 
     const newQuantity = product.quantity + amount;
+    const currentDate = new Date();
 
     const { status, error } = await supabase
       .from("products")
-      .update({ quantity: newQuantity })
+      .update({ quantity: newQuantity, updated_at: currentDate.toISOString() })
       .match({ id: product.id });
 
     if (error) {
