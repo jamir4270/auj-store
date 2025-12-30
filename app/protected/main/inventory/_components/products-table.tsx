@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   ColumnDef,
@@ -34,7 +34,6 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
   const table = useReactTable({
     data,
     columns,
@@ -53,12 +52,10 @@ export function DataTable<TData, TValue>({
     <>
       <div className="flex items-center py-4 justify-between">
         <div className="text-2xl font-bold">All Products</div>
-        <Input
+        <DebouncedInput
           placeholder="Filter product..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
+          onChange={(value) => table.getColumn("name")?.setFilterValue(value)}
           className="max-w-sm border-foreground"
         />
       </div>
@@ -113,5 +110,41 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
     </>
+  );
+}
+
+interface DebouncedInputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange"> {
+  value: string | number;
+  onChange: (value: string | number) => void;
+  debounce?: number;
+}
+
+function DebouncedInput({
+  value: initialValue,
+  onChange,
+  debounce = 500,
+  ...props
+}: DebouncedInputProps) {
+  const [value, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      onChange(value);
+    }, debounce);
+
+    return () => clearTimeout(timeout);
+  }, [value, debounce, onChange]);
+
+  return (
+    <Input
+      {...props}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+    />
   );
 }
