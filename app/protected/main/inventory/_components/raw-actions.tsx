@@ -37,10 +37,65 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { Product } from "@/lib/models";
+import { addStock } from "../actions";
 
 type ProductActionsProp = {
   product: Product;
 };
+
+export function AddStock({ product }: ProductActionsProp) {
+  async function handleAddStockSubmit(formData: FormData) {
+    const amount = parseInt(formData.get("stock") as string);
+
+    if (amount && amount > 0) {
+      await addStock(product, amount);
+    } else {
+      console.error("Invalid input: ", amount);
+    }
+  }
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="default" className="bg-green-400">
+          <PlusIcon />
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-[425px]">
+        <form action={handleAddStockSubmit}>
+          <DialogHeader>
+            <DialogTitle>Add {product.name} Stock</DialogTitle>
+            <DialogDescription>
+              Add stock to existing products in inventory.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4">
+            <div className="grid gap-3">
+              <Label htmlFor="stock">Quantity</Label>
+              <Input
+                id="stock"
+                name="stock"
+                type="number"
+                defaultValue={1}
+                min={1}
+              />
+            </div>
+
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline" type="button">
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button type="submit">Confirm</Button>
+            </DialogFooter>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export function EditProduct({ product }: ProductActionsProp) {
   return (
@@ -73,46 +128,6 @@ export function EditProduct({ product }: ProductActionsProp) {
         </SheetFooter>
       </SheetContent>
     </Sheet>
-  );
-}
-
-export function AddStock({ product }: ProductActionsProp) {
-  return (
-    <Dialog>
-      <form>
-        <DialogTrigger asChild>
-          <Button variant="default" className="bg-green-400">
-            <PlusIcon />
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Add {product.name} Stock</DialogTitle>
-            <DialogDescription>
-              Add stock to existing products in inventory.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4">
-            <div className="grid gap-3">
-              <Label htmlFor="name-1">Quantity</Label>
-              <Input
-                id="name-1"
-                name="name"
-                type="number"
-                defaultValue={1}
-                min={1}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button type="submit">Confirm</Button>
-          </DialogFooter>
-        </DialogContent>
-      </form>
-    </Dialog>
   );
 }
 
