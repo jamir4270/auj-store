@@ -89,9 +89,6 @@ export default async function Inventory() {
         </div>
         <div className="flex-1 w-full min-h-0">
           <Card className="h-full w-full flex flex-col">
-            <CardHeader>
-              <CardTitle>All Products</CardTitle>
-            </CardHeader>
             <CardContent>
               <DataTable columns={columns} data={products} />
             </CardContent>

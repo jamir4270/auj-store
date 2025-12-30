@@ -24,6 +24,7 @@ export interface Product {
   quantity: number;
   status: ProductStatus;
   stock_threshhold: number;
+  cost: number;
   price: number;
   category: ProductCategory;
   created_at: string;
@@ -36,6 +37,7 @@ export interface Order {
   partial_payment: number;
   created_at: string;
   updated_at: string;
+  total_profit: number;
 }
 
 export interface OrderItem {
@@ -46,6 +48,7 @@ export interface OrderItem {
   unit_price_at_sale: number;
   subtotal: number;
   created_at: string;
+  profit: number;
 }
 
 export interface PrintJob {

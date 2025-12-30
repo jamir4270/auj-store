@@ -78,6 +78,25 @@ export const columns: ColumnDef<Product>[] = [
     },
   },
   {
+    accessorKey: "cost",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="p-0"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Cost
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const value = twoDecimal(row.getValue("cost"));
+      return <div className="text-center">{value}</div>;
+    },
+  },
+  {
     accessorKey: "price",
     header: ({ column }) => {
       return (
