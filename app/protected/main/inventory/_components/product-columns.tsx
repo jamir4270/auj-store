@@ -13,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import EditProduct from "./raw-actions";
+import EditProduct, { AddStock } from "./raw-actions";
 
 function setStatusClor(status: string) {
   if (status === "In Stock") {
@@ -73,8 +73,9 @@ export const columns: ColumnDef<Product>[] = [
       const data = row.original;
 
       return (
-        <div className="flex flex-row gap-2 justify-between">
+        <div className="flex flex-row gap-2">
           <EditProduct product={data} />
+          <AddStock product={data} />
         </div>
       );
     },

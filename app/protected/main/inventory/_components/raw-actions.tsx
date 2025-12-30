@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Edit, EditIcon } from "lucide-react";
+import { Edit, PlusIcon } from "lucide-react";
 import {
   Sheet,
   SheetClose,
@@ -12,6 +12,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 import { Product } from "@/lib/models";
 
@@ -50,5 +61,83 @@ export default function EditProduct({ product }: ProductActionsProp) {
         </SheetFooter>
       </SheetContent>
     </Sheet>
+  );
+}
+
+export function AddStock({ product }: ProductActionsProp) {
+  return (
+    <Dialog>
+      <form>
+        <DialogTrigger asChild>
+          <Button variant="ghost" className="p-1">
+            <PlusIcon />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add {product.name} Stock</DialogTitle>
+            <DialogDescription>
+              Add stock to existing products in inventory.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4">
+            <div className="grid gap-3">
+              <Label htmlFor="name-1">Quantity</Label>
+              <Input
+                id="name-1"
+                name="name"
+                type="number"
+                defaultValue={1}
+                min={1}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button type="submit">Confirm</Button>
+          </DialogFooter>
+        </DialogContent>
+      </form>
+    </Dialog>
+  );
+}
+
+export function DeleteProduct({ product }: ProductActionsProp) {
+  return (
+    <Dialog>
+      <form>
+        <DialogTrigger asChild>
+          <Button variant="destructive" className="p-1">
+            <PlusIcon />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Delete Product: {product.name}</DialogTitle>
+            <DialogDescription>Delete product in inventory.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4">
+            <div className="grid gap-3">
+              <Label htmlFor="name-1">Quantity</Label>
+              <Input
+                id="name-1"
+                name="name"
+                type="number"
+                defaultValue={1}
+                min={1}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button type="submit">Confirm</Button>
+          </DialogFooter>
+        </DialogContent>
+      </form>
+    </Dialog>
   );
 }
