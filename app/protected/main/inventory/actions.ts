@@ -3,6 +3,7 @@
 import { Product } from "@/lib/models";
 import { createClient } from "@/lib/supabase/server";
 import { create } from "domain";
+import { Http2ServerResponse } from "http2";
 import { revalidatePath } from "next/cache";
 
 export async function addStock(product: Product, amount: number) {
@@ -37,11 +38,12 @@ export async function deleteProduct(product: Product) {
     const { error } = await supabase
       .from("products")
       .delete()
-      .eq(product.id, 1);
+      .eq("id", product.id);
 
     if (error) {
       console.error(error);
     }
+    revalidatePath("/protected/inventory");
   } catch (error) {
     if (error) {
       console.error("Failed to delete product: ", error);

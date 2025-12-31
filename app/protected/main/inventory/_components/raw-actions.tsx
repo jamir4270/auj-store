@@ -37,7 +37,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { Product } from "@/lib/models";
-import { addStock } from "../actions";
+import { addStock, deleteProduct } from "../actions";
 import { toast } from "sonner";
 type ProductActionsProp = {
   product: Product;
@@ -195,6 +195,13 @@ export function EditProduct({ product }: ProductActionsProp) {
 }
 
 export function DeleteProduct({ product }: ProductActionsProp) {
+  async function handleDeleteProduct() {
+    toast.promise(deleteProduct(product), {
+      loading: "Deleting product...",
+      success: "Successfully deleted product!",
+      error: "Failed to delete to product.",
+    });
+  }
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -214,7 +221,7 @@ export function DeleteProduct({ product }: ProductActionsProp) {
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             className="bg-red-500 text-white"
-            onClick={() => {}}
+            onClick={handleDeleteProduct}
           >
             Continue
           </AlertDialogAction>
