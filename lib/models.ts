@@ -1,9 +1,3 @@
-export type ProductCategory =
-  | "school_supplies"
-  | "snacks"
-  | "beverages"
-  | "accessories"
-  | "others";
 export type OrderStatus = "complete" | "incomplete";
 export type PrintServiceType = "photocopy" | "print";
 export type PrintPaperType = "copier" | "photo";
@@ -26,7 +20,7 @@ export interface Product {
   stock_threshhold: number;
   cost: number;
   price: number;
-  category: ProductCategory;
+  category: string;
   created_at: string;
   updated_at: string;
 }
