@@ -9,12 +9,12 @@ import AddNewProduct from "./_components/add-product";
 import { fetchProducts } from "@/lib/data";
 import { Product } from "@/lib/models";
 import { twoDecimal } from "@/lib/utils";
-import { DataTable } from "./_components/products-table";
-import { columns } from "./_components/product-columns";
+import { ProductsTableWrapper } from "./models";
+import { fetchCategories } from "./data";
 
 export default async function Inventory() {
   const products: Product[] = (await fetchProducts()) ?? [];
-
+  const categories = await fetchCategories();
   let total_asset_value = 0;
   let in_stock_count = 0;
   let low_stock_count = 0;
@@ -90,7 +90,10 @@ export default async function Inventory() {
         <div className="flex-1 w-full min-h-0">
           <Card className="h-full w-full flex flex-col">
             <CardContent>
-              <DataTable columns={columns} data={products} />
+              <ProductsTableWrapper
+                products={products}
+                categories={categories}
+              />
             </CardContent>
           </Card>
         </div>

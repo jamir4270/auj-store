@@ -17,7 +17,7 @@ function setStatusClor(status: string) {
   }
 }
 
-export const columns: ColumnDef<Product>[] = [
+export const getColumns = (categories: string[]): ColumnDef<Product>[] => [
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -124,7 +124,7 @@ export const columns: ColumnDef<Product>[] = [
       return (
         <div className="flex flex-row gap-2">
           <AddStock product={data} />
-          <EditProduct product={data} />
+          <EditProduct product={data} categories={categories} />
           <DeleteProduct product={data} />
         </div>
       );

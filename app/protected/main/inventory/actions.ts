@@ -2,8 +2,6 @@
 
 import { Product } from "@/lib/models";
 import { createClient } from "@/lib/supabase/server";
-import { create } from "domain";
-import { Http2ServerResponse } from "http2";
 import { revalidatePath } from "next/cache";
 
 export async function addStock(product: Product, amount: number) {

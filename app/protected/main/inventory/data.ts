@@ -2,22 +2,25 @@
 
 import { createClient } from "@/lib/supabase/server";
 
-export async function fetchCategories() {
+export async function fetchCategories(): Promise<string[]> {
   try {
     const supabase = await createClient();
 
     const { data, error } = await supabase
-      .from("unique_categories")
-      .select("unique_categories");
+      .from("products")
+      .select("category")
+      .not("category", "is", null);
 
     if (error) {
       throw error;
     }
 
-    return data as [];
+    const categoryNames = data.map((item) => item.category);
+    const uniqueCategories = [...new Set(categoryNames)];
+
+    return uniqueCategories;
   } catch (error) {
-    if (error) {
-      console.log(`Failed to fetch categories: `, error);
-    }
+    console.error(`Failed to fetch categories: `, error);
+    return [];
   }
 }

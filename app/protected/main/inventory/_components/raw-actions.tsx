@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,8 +41,10 @@ import {
 import { Product } from "@/lib/models";
 import { addStock, deleteProduct } from "../actions";
 import { toast } from "sonner";
-type ProductActionsProp = {
+import { EditProductForm } from "./forms";
+export type ProductActionsProp = {
   product: Product;
+  categories?: string[];
 };
 
 export function AddStock({ product }: ProductActionsProp) {
@@ -110,7 +114,7 @@ export function AddStock({ product }: ProductActionsProp) {
   );
 }
 
-export function EditProduct({ product }: ProductActionsProp) {
+export function EditProduct({ product, categories = [] }: ProductActionsProp) {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -118,77 +122,21 @@ export function EditProduct({ product }: ProductActionsProp) {
           <Edit />
         </Button>
       </SheetTrigger>
-
-      <SheetContent className="h-full">
-        <form action="" className="h-full">
-          <div className="h-full flex flex-col">
-            <SheetHeader>
-              <SheetTitle>Edit Product: {product.name}</SheetTitle>
-              <SheetDescription>
-                Edit {product.name} in inventory
-              </SheetDescription>
-            </SheetHeader>
-
-            <div className="flex-1 flex flex-col justify-between px-4 py-6">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="name">Name</Label>
-                <Input type="string" id="name" defaultValue={product.name} />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="category">Category</Label>
-                <Input
-                  type="string"
-                  id="category"
-                  defaultValue={product.category}
-                />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="quantity">Stock</Label>
-                <Input
-                  type="number"
-                  id="quantity"
-                  defaultValue={product.quantity}
-                  min={1}
-                />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="cost">Cost</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  id="cost"
-                  defaultValue={product.cost}
-                  min={1}
-                />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="price">Price</Label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  id="price"
-                  defaultValue={product.price}
-                  min={1}
-                />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="quantity">Stock Threshhold</Label>
-                <Input
-                  type="number"
-                  id="quantity"
-                  defaultValue={product.stock_threshhold}
-                  min={1}
-                />
-              </div>
-            </div>
-            <SheetFooter className="flex">
-              <Button type="submit">Confirm</Button>
-              <SheetClose asChild>
-                <Button variant="outline">Close</Button>
-              </SheetClose>
-            </SheetFooter>
-          </div>
-        </form>
+      <SheetContent className="flex flex-col h-full gap-3">
+        <SheetHeader>
+          <SheetTitle>Edit Product: {product.name}</SheetTitle>
+          <SheetDescription>
+            Make changes to an existing product inyour inventory.
+          </SheetDescription>
+        </SheetHeader>
+        <div className="h-full flex flex-col p-5 pt-0">
+          <EditProductForm product={product} categories={categories} />
+          <SheetFooter className="flex p-0 gap-0 mt-3">
+            <SheetClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </SheetClose>
+          </SheetFooter>
+        </div>
       </SheetContent>
     </Sheet>
   );
