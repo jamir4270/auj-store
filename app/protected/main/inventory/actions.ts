@@ -40,8 +40,8 @@ export async function addStock(product: Product, amount: number) {
     revalidatePath("/protected/inventory");
     return status;
   } catch (error) {
-    if (error) {
-      console.error("Failed to update products table: ", error);
+    if (error instanceof Error) {
+      console.error("Failed to update products table: ", error.message);
     }
   }
 }

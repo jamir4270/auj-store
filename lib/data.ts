@@ -5,7 +5,10 @@ export async function fetchProducts() {
   const supabase = await createClient();
 
   try {
-    const { data, error } = await supabase.from("products").select("*");
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .order("updated_at", { ascending: false });
 
     if (error) {
       throw error;
