@@ -4,6 +4,23 @@ import { Product } from "@/lib/models";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
+export async function addProduct(product: Product) {
+  try {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase.from("products").insert(product);
+
+    if (error) {
+      throw error;
+    }
+    revalidatePath("/protected/inventory");
+    return data;
+  } catch (error) {
+    console.error("Failed to add new product to products table: ", error);
+    return error;
+  }
+}
+
 export async function addStock(product: Product, amount: number) {
   try {
     const supabase = await createClient();

@@ -1,6 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { CirclePlusIcon } from "lucide-react";
 import {
   Sheet,
@@ -12,8 +10,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { AddNewProductForm } from "./forms";
 
-export default function AddNewProduct() {
+export type AddNewProductProp = {
+  categories: string[];
+};
+
+export function AddNewProduct({ categories }: AddNewProductProp) {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -22,27 +25,19 @@ export default function AddNewProduct() {
           <p>Add New Product</p>
         </Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="flex flex-col h-full gap-3">
         <SheetHeader>
           <SheetTitle>Add New Product</SheetTitle>
-          <SheetDescription>Add new product to inventory</SheetDescription>
+          <SheetDescription>Add a new product your inventory.</SheetDescription>
         </SheetHeader>
-        <div className="grid flex-1 auto-rows-min gap-6 px-4">
-          <div className="grid gap-3">
-            <Label htmlFor="sheet-demo-name">Name</Label>
-            <Input id="sheet-demo-name" defaultValue="Pedro Duarte" />
-          </div>
-          <div className="grid gap-3">
-            <Label htmlFor="sheet-demo-username">Username</Label>
-            <Input id="sheet-demo-username" defaultValue="@peduarte" />
-          </div>
+        <div className="h-full flex flex-col p-5 pt-0">
+          <AddNewProductForm categories={categories} />
+          <SheetFooter className="flex p-0 gap-0 mt-3">
+            <SheetClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </SheetClose>
+          </SheetFooter>
         </div>
-        <SheetFooter>
-          <Button type="submit">Add Product</Button>
-          <SheetClose asChild>
-            <Button variant="outline">Close</Button>
-          </SheetClose>
-        </SheetFooter>
       </SheetContent>
     </Sheet>
   );

@@ -23,8 +23,9 @@ import { ProductActionsProp } from "./raw-actions";
 import { useState } from "react";
 import * as z from "zod";
 import { Product } from "@/lib/models";
-import { editProduct } from "../actions";
+import { addProduct, editProduct } from "../actions";
 import { toast } from "sonner";
+import { AddNewProductProp } from "./add-product";
 
 type ProductCategoryProp = {
   categories: string[];
@@ -185,11 +186,10 @@ export function EditProductForm({ product, categories }: EditProductProp) {
   );
 }
 
-export function AddNewProductForm({ categories }: EditProductProp) {
+export function AddNewProductForm({ categories }: AddNewProductProp) {
   const [categoryState, setCategoryState] = useState(false);
 
   async function handleAddNewProductFormSubmit(formData: FormData) {
-    const currentDate = new Date();
     const result = ProductSchema.safeParse({
       name: formData.get("name"),
       category: formData.get("category"),
