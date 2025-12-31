@@ -2,6 +2,7 @@
 
 import { Product } from "@/lib/models";
 import { createClient } from "@/lib/supabase/server";
+import { create } from "domain";
 import { revalidatePath } from "next/cache";
 
 export async function addStock(product: Product, amount: number) {
@@ -25,6 +26,25 @@ export async function addStock(product: Product, amount: number) {
   } catch (error) {
     if (error) {
       console.error("Failed to update products table: ", error);
+    }
+  }
+}
+
+export async function deleteProduct(product: Product) {
+  try {
+    const supabase = await createClient();
+
+    const { error } = await supabase
+      .from("products")
+      .delete()
+      .eq(product.id, 1);
+
+    if (error) {
+      console.error(error);
+    }
+  } catch (error) {
+    if (error) {
+      console.error("Failed to delete product: ", error);
     }
   }
 }
