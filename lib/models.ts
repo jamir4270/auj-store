@@ -13,16 +13,16 @@ export type PrintColorMode = "b&w" | "color";
 export type ProductStatus = "in_stock" | "low_stock" | "out_of_stock";
 
 export interface Product {
-  id: string;
+  id?: string;
   name: string;
   quantity: number;
-  status: ProductStatus;
+  status?: ProductStatus;
   stock_threshhold: number;
   cost: number;
   price: number;
   category: string;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Order {

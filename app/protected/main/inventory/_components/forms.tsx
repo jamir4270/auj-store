@@ -184,3 +184,143 @@ export function EditProductForm({ product, categories }: EditProductProp) {
     </div>
   );
 }
+
+export function AddNewProductForm({ categories }: EditProductProp) {
+  const [categoryState, setCategoryState] = useState(false);
+
+  async function handleAddNewProductFormSubmit(formData: FormData) {
+    const currentDate = new Date();
+    const result = ProductSchema.safeParse({
+      name: formData.get("name"),
+      category: formData.get("category"),
+      quantity: parseInt(formData.get("quantity") as string),
+      stock_threshhold: parseInt(formData.get("stock_threshhold") as string),
+      cost: parseFloat(formData.get("cost") as string),
+      price: formData.get("price"),
+    });
+
+    if (!result.success) {
+      console.error("Invalid form data: ", result.error);
+    } else {
+      const updatedProduct: Product = {
+        ...result.data,
+      };
+      toast.promise(addProduct(updatedProduct), {
+        loading: "Adding new product...",
+        success: "Successfully added new product!",
+        error: "Failed to add new product.",
+      });
+    }
+  }
+  return (
+    <div className="w-full max-w-md">
+      <form action={handleAddNewProductFormSubmit}>
+        <FieldGroup className="flex flex-col">
+          <FieldSet>
+            <FieldGroup className="flex flex-col gap-2">
+              <Field className="gap-1">
+                <FieldLabel htmlFor="name">Name</FieldLabel>
+                <Input
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="Product name..."
+                  required
+                />
+              </Field>
+
+              <Field className="gap-1">
+                <div className="flex flex-row justify-between">
+                  <FieldLabel htmlFor="category">
+                    {categoryState && "New "}Category
+                  </FieldLabel>
+                  <div className="flex flex-row">
+                    <div className="text-sm mr-1"> New Category </div>
+                    <Switch
+                      onClick={() => {
+                        setCategoryState(!categoryState);
+                      }}
+                    />
+                  </div>
+                </div>
+                {!categoryState && (
+                  <Select name="category">
+                    <SelectTrigger id="category">
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => {
+                        return (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                )}
+                {categoryState && (
+                  <Field className="gap-1">
+                    <Input
+                      id="category"
+                      name="category"
+                      placeholder="New category..."
+                    />
+                  </Field>
+                )}
+              </Field>
+              <Field className="gap-1">
+                <FieldLabel htmlFor="quantity">Stock</FieldLabel>
+                <Input
+                  id="quantity"
+                  name="quantity"
+                  type="number"
+                  placeholder="e.g. 100"
+                  required
+                />
+              </Field>
+              <Field className="gap-1">
+                <FieldLabel htmlFor="stock_threshhold">
+                  Stock Threshhold
+                </FieldLabel>
+                <Input
+                  id="stock_threshhold"
+                  name="stock_threshhold"
+                  type="number"
+                  placeholder="e.g. 10"
+                  required
+                />
+              </Field>
+              <Field className="gap-1">
+                <FieldLabel htmlFor="cost">Cost</FieldLabel>
+                <Input
+                  id="cost"
+                  name="cost"
+                  type="number"
+                  placeholder="e.g. 10"
+                  step={0.01}
+                  required
+                />
+              </Field>
+              <Field className="gap-1">
+                <FieldLabel htmlFor="price">Price</FieldLabel>
+                <Input
+                  id="price"
+                  name="price"
+                  type="number"
+                  placeholder="e.g. 10"
+                  step={0.01}
+                  required
+                />
+              </Field>
+            </FieldGroup>
+          </FieldSet>
+          <FieldSeparator />
+          <Field orientation="vertical">
+            <Button type="submit">Submit</Button>
+          </Field>
+        </FieldGroup>
+      </form>
+    </div>
+  );
+}
