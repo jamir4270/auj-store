@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -15,7 +17,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { Switch } from "@/components/ui/switch";
+
 import { ProductActionsProp } from "./raw-actions";
+import { useState } from "react";
 
 type ProductCategoryProp = {
   categories: string[];
@@ -24,6 +29,7 @@ type ProductCategoryProp = {
 type EditProductProp = ProductActionsProp & ProductCategoryProp;
 
 export function EditProductForm({ product, categories }: EditProductProp) {
+  const [categoryState, setCategoryState] = useState(false);
   return (
     <div className="w-full max-w-md">
       <form>
@@ -34,22 +40,42 @@ export function EditProductForm({ product, categories }: EditProductProp) {
                 <FieldLabel htmlFor="name">Name</FieldLabel>
                 <Input id="name" placeholder={product.name} required />
               </Field>
+
               <Field className="gap-1">
-                <FieldLabel htmlFor="category">Category</FieldLabel>
-                <Select defaultValue={product.category}>
-                  <SelectTrigger id="category">
-                    <SelectValue placeholder="Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => {
-                      return (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
+                <div className="flex flex-row justify-between">
+                  <FieldLabel htmlFor="category">
+                    {categoryState && "New "}Category
+                  </FieldLabel>
+                  <div className="flex flex-row">
+                    <div className="text-sm mr-1"> New Category </div>
+                    <Switch
+                      onClick={() => {
+                        setCategoryState(!categoryState);
+                      }}
+                    />
+                  </div>
+                </div>
+                {!categoryState && (
+                  <Select defaultValue={product.category}>
+                    <SelectTrigger id="category">
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => {
+                        return (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                )}
+                {categoryState && (
+                  <Field className="gap-1">
+                    <Input id="category" placeholder={product.category} />
+                  </Field>
+                )}
               </Field>
               <Field className="gap-1">
                 <FieldLabel htmlFor="quantity">Stock</FieldLabel>
