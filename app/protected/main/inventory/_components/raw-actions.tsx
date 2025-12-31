@@ -126,7 +126,7 @@ export function EditProduct({ product, categories = [] }: ProductActionsProp) {
         <SheetHeader>
           <SheetTitle>Edit Product: {product.name}</SheetTitle>
           <SheetDescription>
-            Make changes to an existing product inyour inventory.
+            Make changes to an existing product in your inventory.
           </SheetDescription>
         </SheetHeader>
         <div className="h-full flex flex-col p-5 pt-0">
