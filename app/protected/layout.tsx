@@ -1,11 +1,13 @@
 import { cookies } from "next/headers";
 import { AppSidebar } from "@/components/app-sidebar";
+import { Toaster } from "@/components/ui/sonner";
 import {
   SidebarTrigger,
   SidebarProvider,
   SidebarInset,
 } from "@/components/ui/sidebar";
 import { SidebarProp } from "@/components/app-sidebar";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import "../globals.css";
 
 import {
@@ -58,11 +60,16 @@ export default async function ProtectedLayout({
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar routes={routes} />
       <SidebarInset>
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
+        <header className="flex flex-row justify-between w-full h-14 shrink-0 items-center border-b px-4">
           <SidebarTrigger />
+          <div className="font-bold">AUJ Store Management</div>
+          <ThemeSwitcher />
         </header>
 
-        <main className="flex flex-1 flex-col gap-4 p-4">{children}</main>
+        <main className="flex w-full h-full flex-col gap-4 p-4">
+          {children}
+          <Toaster position="top-center" />
+        </main>
       </SidebarInset>
     </SidebarProvider>
   );

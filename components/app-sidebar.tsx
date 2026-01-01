@@ -26,7 +26,7 @@ type SidebarProps = {
 
 export function AppSidebar({ routes }: SidebarProps) {
   return (
-    <Sidebar variant="sidebar" collapsible="icon">
+    <Sidebar variant="inset" collapsible="icon">
       <SidebarHeader className="border-y-2 border-accent">
         <SidebarContent>
           <div className="flex items-center justify-center py-4 font-bold transition-all group-data-[state=collapsed]:py-2">

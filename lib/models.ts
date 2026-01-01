@@ -1,9 +1,3 @@
-export type ProductCategory =
-  | "school_supplies"
-  | "snacks"
-  | "beverages"
-  | "accessories"
-  | "others";
 export type OrderStatus = "complete" | "incomplete";
 export type PrintServiceType = "photocopy" | "print";
 export type PrintPaperType = "copier" | "photo";
@@ -16,14 +10,19 @@ export type PrintPaperSizeType =
   | "4r"
   | "5r";
 export type PrintColorMode = "b&w" | "color";
+export type ProductStatus = "in_stock" | "low_stock" | "out_of_stock";
 
 export interface Product {
-  id: string;
+  id?: string;
   name: string;
   quantity: number;
+  status?: ProductStatus;
+  stock_threshhold: number;
+  cost: number;
   price: number;
-  category: ProductCategory;
-  created_at: string;
+  category: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Order {
@@ -33,6 +32,7 @@ export interface Order {
   partial_payment: number;
   created_at: string;
   updated_at: string;
+  total_profit: number;
 }
 
 export interface OrderItem {
@@ -43,6 +43,7 @@ export interface OrderItem {
   unit_price_at_sale: number;
   subtotal: number;
   created_at: string;
+  profit: number;
 }
 
 export interface PrintJob {
