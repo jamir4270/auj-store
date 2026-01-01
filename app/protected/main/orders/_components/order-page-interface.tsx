@@ -9,13 +9,14 @@ import {
   CardContent,
 } from "@/components/ui/card";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProductAtSale } from "@/lib/models";
 import { twoDecimal } from "@/lib/utils";
 import { Minus, PlusIcon, Trash2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { subtle } from "crypto";
 
 type OrderProps = {
   products: ProductAtSale[];
@@ -47,10 +48,10 @@ export function OrderInterface({ products }: OrderProps) {
           </div>
           <CardDescription>Record Orders</CardDescription>
         </div>
-        <Card className="flex flex-col h-[73vh] pb-5">
-          <CardHeader className="flex flex-col gap-5">
+        <Card className="flex flex-col h-[89vh] pb-5">
+          <CardHeader className="flex flex-col">
             <Input type="search" placeholder="Search products..." />
-            <ScrollArea className="h-[55vh]">
+            <ScrollArea className="h-[73vh] mt-5">
               <div className="flex flex-col gap-2 mr-5">
                 {products?.map((product) => {
                   return (
@@ -72,11 +73,11 @@ export function OrderInterface({ products }: OrderProps) {
       </div>
       {isOrdering && (
         <div className="flex flex-col h-screen flex-1 animate-in fade-in slide-in-from-right-5 duration-300">
-          <Card className="flex flex-col h-[84vh]">
+          <Card className="flex flex-col h-screen">
             <CardHeader>
               <CardTitle>Order Details</CardTitle>
               <CardDescription>List of orders</CardDescription>
-              <ScrollArea className="h-[30vh] border-2 rounded-2xl">
+              <ScrollArea className="h-[50vh] border-2 rounded-2xl">
                 <div>
                   {orderList.map((order) => {
                     return (
@@ -163,15 +164,20 @@ function ProductCard({
         }`}
         onClick={handleOnClick}
       >
-        <CardHeader className="flex flex-row justify-between items-center">
+        <CardHeader className="flex flex-row justify-between items-center pb-0">
           <div className="flex flex-col h- gap-1">
             <CardTitle className="mt-2">{product.name}</CardTitle>
             <CardDescription>{product.category}</CardDescription>
           </div>
           <div className="text-2xl">{twoDecimal(product.price)}</div>
         </CardHeader>
-        <CardFooter className={setStatusColor(product.status ?? "")}>
+        <CardFooter
+          className={`${setStatusColor(
+            product.status ?? ""
+          )} flex flex-row gap-1`}
+        >
           {product.status}
+          <div className="text-">{`(${product.quantity})`}</div>
         </CardFooter>
       </Card>
     </div>
@@ -184,12 +190,29 @@ type OrderItemCardProps = {
   updateProductList: (product: ProductAtSale[]) => void;
 };
 
-function OrderItemCard({
+export default function OrderItemCard({
   product,
   orderList,
   updateProductList,
 }: OrderItemCardProps) {
-  const [amount, setAmount] = useState(1);
+  function updateAmount(newAmount: number) {
+    // 1. Validate constraints (Min 1, Max = Stock Quantity)
+    if (newAmount < 1) newAmount = 1;
+    if (newAmount > product.quantity) newAmount = product.quantity;
+
+    const newOrderList = orderList.map((item) => {
+      if (item.id === product.id) {
+        return {
+          ...item,
+          amount: newAmount,
+          subtotal: item.price * newAmount,
+        };
+      }
+      return item;
+    });
+
+    updateProductList(newOrderList);
+  }
 
   function handleDelete() {
     const newProductList = orderList.filter((item) => {
@@ -198,57 +221,48 @@ function OrderItemCard({
     updateProductList(newProductList);
   }
 
+  const currentSubTotal = product.price * (product.amount ?? 1);
+
   return (
     <div>
-      <Card className={`p-0`}>
-        <CardHeader className="flex flex-row justify-between items-center">
-          <div className="flex flex-col h-screen gap-1">
+      <Card className="p-0 m-5">
+        <CardHeader className="flex flex-row justify-between items-center pb-0">
+          <div className="flex flex-col h-fit gap-1">
             <CardTitle className="mt-2">{product.name}</CardTitle>
             <CardDescription>{product.category}</CardDescription>
           </div>
-          <div className="text-2xl">
-            {twoDecimal(product.subtotal as number)}
-          </div>
+          <div className="text-2xl">{twoDecimal(currentSubTotal)}</div>
         </CardHeader>
         <CardFooter className="flex flex-row justify-between">
-          <div className="flex flex-row gap-1">
+          <div className="flex flex-row gap-1 items-center">
             <Minus
-              onClick={() => {
-                if (amount >= 1 && amount <= product.quantity) {
-                  setAmount(amount - 1);
-                  product.amount = amount;
-                } else {
-                  setAmount(1);
-                  product.amount = amount;
-                }
-              }}
+              className="cursor-pointer"
+              onClick={() => updateAmount((product.amount ?? 2) - 1)}
             />
+
             <Input
               type="number"
               min={1}
               max={product.quantity}
-              value={amount}
-              onChange={(event) =>
-                setAmount(
-                  parseInt(!event.target.value ? "1" : event.target.value)
-                )
-              }
-              className="w-20 text-center"
-            ></Input>
-            <PlusIcon
-              onClick={() => {
-                if (amount >= 1 && amount <= product.quantity) {
-                  setAmount(amount + 1);
-                  product.amount = amount;
-                } else {
-                  setAmount(1);
-                  product.amount = amount;
-                }
+              value={product.amount ?? 1}
+              onChange={(event) => {
+                const val = event.target.value;
+                const parsed = parseInt(val === "" ? "1" : val);
+                updateAmount(parsed);
               }}
+              className="w-20 text-center"
+            />
+
+            <PlusIcon
+              className="cursor-pointer"
+              onClick={() => updateAmount((product.amount ?? 1) + 1)}
             />
           </div>
           <div>
-            <Trash2 className="text-red-500" onClick={handleDelete} />
+            <Trash2
+              className="text-red-500 cursor-pointer"
+              onClick={handleDelete}
+            />
           </div>
         </CardFooter>
       </Card>
