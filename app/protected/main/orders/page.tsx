@@ -5,7 +5,7 @@ import { ProductAtSale } from "@/lib/models";
 export default async function Orders() {
   const products: ProductAtSale[] = await fetchProducts();
   return (
-    <div>
+    <div className="overflow-hidden h-screen">
       <OrderInterface products={products} />
     </div>
   );

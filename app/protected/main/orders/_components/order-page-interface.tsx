@@ -30,8 +30,8 @@ export function OrderInterface({ products }: OrderProps) {
     setOrderList(newList);
   };
   return (
-    <div className="flex flex-row h-full gap-3 px-3">
-      <div className="flex flex-col flex-2 w-full gap-5 overflow-y-auto">
+    <div className="flex flex-row h-screen gap-3 px-3">
+      <div className="flex flex-col flex-2 w-full gap-5">
         <div>
           <div className="flex flex-row justify-between">
             <CardTitle className="text-3xl">Orders</CardTitle>{" "}
@@ -47,10 +47,10 @@ export function OrderInterface({ products }: OrderProps) {
           </div>
           <CardDescription>Record Orders</CardDescription>
         </div>
-        <Card>
+        <Card className="flex flex-col h-[73vh] pb-5">
           <CardHeader className="flex flex-col gap-5">
             <Input type="search" placeholder="Search products..." />
-            <ScrollArea className="h-screen pt-5 border-t-2">
+            <ScrollArea className="h-[55vh]">
               <div className="flex flex-col gap-2 mr-5">
                 {products?.map((product) => {
                   return (
@@ -72,20 +72,24 @@ export function OrderInterface({ products }: OrderProps) {
       </div>
       {isOrdering && (
         <div className="flex flex-col h-screen flex-1 animate-in fade-in slide-in-from-right-5 duration-300">
-          <Card>
+          <Card className="flex flex-col h-[84vh]">
             <CardHeader>
               <CardTitle>Order Details</CardTitle>
               <CardDescription>List of orders</CardDescription>
-              {orderList.map((order) => {
-                return (
-                  <OrderItemCard
-                    key={order.id}
-                    product={order}
-                    orderList={orderList}
-                    updateProductList={setOrderList}
-                  />
-                );
-              })}
+              <ScrollArea className="h-[30vh] border-2 rounded-2xl">
+                <div>
+                  {orderList.map((order) => {
+                    return (
+                      <OrderItemCard
+                        key={order.id}
+                        product={order}
+                        orderList={orderList}
+                        updateProductList={setOrderList}
+                      />
+                    );
+                  })}
+                </div>
+              </ScrollArea>
             </CardHeader>
             <CardContent></CardContent>
             <CardFooter>
@@ -160,7 +164,7 @@ function ProductCard({
         onClick={handleOnClick}
       >
         <CardHeader className="flex flex-row justify-between items-center">
-          <div className="flex flex-col h-full gap-1">
+          <div className="flex flex-col h- gap-1">
             <CardTitle className="mt-2">{product.name}</CardTitle>
             <CardDescription>{product.category}</CardDescription>
           </div>
@@ -198,7 +202,7 @@ function OrderItemCard({
     <div>
       <Card className={`p-0`}>
         <CardHeader className="flex flex-row justify-between items-center">
-          <div className="flex flex-col h-full gap-1">
+          <div className="flex flex-col h-screen gap-1">
             <CardTitle className="mt-2">{product.name}</CardTitle>
             <CardDescription>{product.category}</CardDescription>
           </div>
