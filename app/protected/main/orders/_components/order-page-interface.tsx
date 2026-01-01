@@ -27,7 +27,12 @@ export function OrderInterface({ products }: OrderProps) {
         <div>
           <div className="flex flex-row justify-between">
             <CardTitle className="text-3xl">Orders</CardTitle>{" "}
-            <Button onClick={() => setIsOrdering(!isOrdering)}>Order</Button>
+            <Button
+              onClick={() => setIsOrdering(!isOrdering)}
+              disabled={isOrdering ? true : false}
+            >
+              Order
+            </Button>
           </div>
           <CardDescription>Record Orders</CardDescription>
         </div>
@@ -50,7 +55,9 @@ export function OrderInterface({ products }: OrderProps) {
               <CardDescription></CardDescription>
             </CardHeader>
             <CardContent></CardContent>
-            <CardFooter></CardFooter>
+            <CardFooter>
+              <Button onClick={() => setIsOrdering(!isOrdering)}>Cancel</Button>
+            </CardFooter>
           </Card>
         </div>
       )}
@@ -75,16 +82,17 @@ function setStatusColor(status: string) {
 function ProductCard({ product }: ProductProps) {
   return (
     <div>
-      <Card>
+      <Card className="p-0">
         <CardHeader className="flex flex-row justify-between items-center">
-          <div className="flex flex-col h-full gap-5">
-            <CardTitle>{product.name}</CardTitle>
-            <CardDescription className={setStatusColor(product.status ?? "")}>
-              {product.status}
-            </CardDescription>
+          <div className="flex flex-col h-full gap-1">
+            <CardTitle className="mt-2">{product.name}</CardTitle>
+            <CardDescription>{product.category}</CardDescription>
           </div>
           <div className="text-2xl">{twoDecimal(product.price)}</div>
         </CardHeader>
+        <CardFooter className={setStatusColor(product.status ?? "")}>
+          {product.status}
+        </CardFooter>
       </Card>
     </div>
   );
