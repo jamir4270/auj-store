@@ -1,3 +1,9 @@
+import { OrderInterface } from "./_components/order-page-interface";
+
 export default function Orders() {
-  return <div>This is Orders page.</div>;
+  return (
+    <div>
+      <OrderInterface />
+    </div>
+  );
 }
