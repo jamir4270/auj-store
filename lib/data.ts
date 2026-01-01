@@ -1,7 +1,7 @@
 import { Product, Order, OrderItem, PrintJob } from "./models";
 import { createClient } from "./supabase/server";
 
-export async function fetchProducts() {
+export async function fetchProducts(): Promise<Product[]> {
   const supabase = await createClient();
 
   try {
@@ -30,8 +30,10 @@ export async function fetchProducts() {
   } catch (error) {
     if (error instanceof Error) {
       console.log("Failed to fetch products: ", error.message);
+      return [];
     } else {
       console.log("Failed to fetch products: ", String(error));
+      return [];
     }
   }
 }
@@ -50,8 +52,10 @@ export async function fetchOrders() {
   } catch (error) {
     if (error instanceof Error) {
       console.log("Failed to fetch orders: ", error.message);
+      throw error;
     } else {
       console.log("Failed to fetch orders: ", String(error));
+      throw error;
     }
   }
 }
@@ -73,8 +77,10 @@ export async function fetchOrderItems(id: string) {
   } catch (error) {
     if (error instanceof Error) {
       console.log("Failed to fetch order items: ", error.message);
+      throw error;
     } else {
       console.log("Failed to fetch order items: ", String(error));
+      throw error;
     }
   }
 }
