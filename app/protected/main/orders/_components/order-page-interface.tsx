@@ -196,7 +196,6 @@ export default function OrderItemCard({
   updateProductList,
 }: OrderItemCardProps) {
   function updateAmount(newAmount: number) {
-    // 1. Validate constraints (Min 1, Max = Stock Quantity)
     if (newAmount < 1) newAmount = 1;
     if (newAmount > product.quantity) newAmount = product.quantity;
 
