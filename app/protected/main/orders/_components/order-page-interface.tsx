@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProductAtSale } from "@/lib/models";
 import { twoDecimal } from "@/lib/utils";
-import { Minus, MinusCircle, PlusIcon, Trash, Trash2 } from "lucide-react";
+import { Minus, PlusIcon, Trash2 } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type OrderProps = {
   products: ProductAtSale[];
@@ -30,7 +31,7 @@ export function OrderInterface({ products }: OrderProps) {
   };
   return (
     <div className="flex flex-row h-full gap-3 px-3">
-      <div className="flex flex-col flex-2 w-full gap-5">
+      <div className="flex flex-col flex-2 w-full gap-5 overflow-y-auto">
         <div>
           <div className="flex flex-row justify-between">
             <CardTitle className="text-3xl">Orders</CardTitle>{" "}
@@ -48,25 +49,29 @@ export function OrderInterface({ products }: OrderProps) {
         </div>
         <Card>
           <CardHeader className="flex flex-col gap-5">
-            <Input type="search" placeholder="Search products..."></Input>
-            {products?.map((product) => {
-              return (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  productList={orderList}
-                  updateIsOrdering={setIsOrdering}
-                  updateProductList={handleOrderListUpdate}
-                />
-              );
-            })}
+            <Input type="search" placeholder="Search products..." />
+            <ScrollArea className="h-screen pt-5 border-t-2">
+              <div className="flex flex-col gap-2 mr-5">
+                {products?.map((product) => {
+                  return (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      productList={orderList}
+                      updateIsOrdering={setIsOrdering}
+                      updateProductList={handleOrderListUpdate}
+                    />
+                  );
+                })}
+              </div>
+            </ScrollArea>
           </CardHeader>
           <CardContent></CardContent>
           <CardFooter></CardFooter>
         </Card>
       </div>
       {isOrdering && (
-        <div className="flex flex-col flex-1 w-full animate-in fade-in slide-in-from-right-5 duration-300">
+        <div className="flex flex-col h-screen flex-1 animate-in fade-in slide-in-from-right-5 duration-300">
           <Card>
             <CardHeader>
               <CardTitle>Order Details</CardTitle>
