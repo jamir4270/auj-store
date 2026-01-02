@@ -60,6 +60,7 @@ export interface PrintJob {
 }
 
 export interface ProductAtSale extends Product {
+  order_id?: string;
   amount?: number;
   unit_price_at_sale?: number;
   subtotal?: number;

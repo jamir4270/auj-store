@@ -9,13 +9,15 @@ import {
   CardContent,
 } from "@/components/ui/card";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ProductAtSale } from "@/lib/models";
+import { Order, ProductAtSale } from "@/lib/models";
 import { twoDecimal } from "@/lib/utils";
 import { Minus, PlusIcon, Trash2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { toast } from "sonner";
+import { submitNewOrder } from "../actions";
 
 type OrderProps = {
   products: ProductAtSale[];
@@ -24,11 +26,48 @@ type OrderProps = {
 export function OrderInterface({ products }: OrderProps) {
   const [isOrdering, setIsOrdering] = useState(false);
   const [orderList, setOrderList] = useState<ProductAtSale[]>([]);
+  const [order, setOrder] = useState<Order>({
+    total: 0,
+    status: "incomplete",
+    total_profit: 0,
+    partial_payment: 0,
+  });
+  const [submit, setSubmit] = useState(false);
   console.log(`Parent isOrdering: ${isOrdering}`);
 
   const handleOrderListUpdate = (newList: ProductAtSale[]) => {
+    const newOrder: Order = {
+      total: 0,
+      status: "complete",
+      total_profit: 0,
+      partial_payment: 0,
+    };
+
+    for (const item of newList) {
+      newOrder.total += item.subtotal ?? 0;
+      newOrder.total_profit += item.profit ?? 0;
+      console.log((item.price - item.cost) * (item.amount ?? 1));
+      console.log(item.subtotal);
+    }
+
+    setOrder(newOrder);
     setOrderList(newList);
   };
+
+  useEffect(() => {
+    if (submit) {
+      toast.promise(submitNewOrder(order, orderList), {
+        loading: "Adding new record...",
+        success: "Successfully added new record!",
+        error: "Failed to add new record.",
+      });
+      setSubmit(false);
+      const emptyArray: ProductAtSale[] = [];
+      setIsOrdering(false);
+      console.log(`Parent isOrdering: ${isOrdering}`);
+      setOrderList(emptyArray);
+    }
+  }, [submit]);
   return (
     <div className="flex flex-row h-screen gap-3 px-3">
       <div className="flex flex-col flex-2 w-full gap-5">
@@ -84,20 +123,34 @@ export function OrderInterface({ products }: OrderProps) {
                         key={order.id}
                         product={order}
                         orderList={orderList}
-                        updateProductList={setOrderList}
+                        updateProductList={handleOrderListUpdate}
                       />
                     );
                   })}
                 </div>
               </ScrollArea>
             </CardHeader>
-            <CardContent></CardContent>
-            <CardFooter>
+            <CardContent className="flex flex-col gap-3 h-full">
+              <div className="flex flex-row justify-between">
+                <p className="text-2xl">Total: </p>
+                <p className="text-2xl">{twoDecimal(order.total)}</p>
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-col gap-3 justify-self-end">
               <Button
+                className="w-full bg-green-400"
                 onClick={() => {
+                  setSubmit(true);
+                }}
+              >
+                Submit
+              </Button>
+              <Button
+                className="w-full"
+                onClick={() => {
+                  const emptyArray: ProductAtSale[] = [];
                   setIsOrdering(false);
                   console.log(`Parent isOrdering: ${isOrdering}`);
-                  const emptyArray: ProductAtSale[] = [];
                   setOrderList(emptyArray);
                 }}
               >
@@ -130,19 +183,25 @@ function setStatusColor(status: string) {
 
 function ProductCard({
   product,
-  productList = [],
+  productList,
   updateIsOrdering,
   updateProductList,
 }: ProductProps) {
   const [isClicked, setIsClicked] = useState(false);
+  const isAlreadyInList = productList.some((item) => item.id === product.id);
 
   function handleOnClick() {
     if (product.status !== "out_of_stock") {
       updateIsOrdering(true);
-      if (productList.includes(product)) {
+      if (isAlreadyInList) {
         updateProductList(productList);
       } else {
-        const newList: ProductAtSale[] = [...productList, product];
+        const newProduct: ProductAtSale = {
+          ...product,
+          profit: product.price - product.cost,
+          subtotal: product.price,
+        };
+        const newList: ProductAtSale[] = [...productList, newProduct];
         updateProductList(newList);
         setIsClicked(true);
       }
@@ -158,7 +217,7 @@ function ProductCard({
         } ${
           isClicked &&
           product.status !== "out_of_stock" &&
-          productList.includes(product) &&
+          isAlreadyInList &&
           "border-green-400"
         }`}
         onClick={handleOnClick}
@@ -204,7 +263,7 @@ export default function OrderItemCard({
           ...item,
           amount: newAmount,
           subtotal: item.price * newAmount,
-          profit: item.price * newAmount - item.cost * newAmount,
+          profit: (item.price - item.cost) * newAmount,
           unit_price_at_sale: item.price,
         };
       }
