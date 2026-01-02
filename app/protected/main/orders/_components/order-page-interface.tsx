@@ -9,14 +9,13 @@ import {
   CardContent,
 } from "@/components/ui/card";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProductAtSale } from "@/lib/models";
 import { twoDecimal } from "@/lib/utils";
 import { Minus, PlusIcon, Trash2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { subtle } from "crypto";
 
 type OrderProps = {
   products: ProductAtSale[];
@@ -205,6 +204,8 @@ export default function OrderItemCard({
           ...item,
           amount: newAmount,
           subtotal: item.price * newAmount,
+          profit: item.price * newAmount - item.cost * newAmount,
+          unit_price_at_sale: item.price,
         };
       }
       return item;
