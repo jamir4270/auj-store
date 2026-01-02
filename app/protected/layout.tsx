@@ -60,13 +60,12 @@ export default async function ProtectedLayout({
     <SidebarProvider defaultOpen={defaultOpen}>
       <AppSidebar routes={routes} />
       <SidebarInset>
-        <header className="flex flex-row justify-between w-full h-14 shrink-0 items-center border-b px-4">
-          <SidebarTrigger />
-          <div className="font-bold">AUJ Store Management</div>
-          <ThemeSwitcher />
-        </header>
-
         <main className="flex w-full h-full flex-col gap-4 p-4">
+          <header className="flex flex-row justify-between w-full h-14 shrink-0 items-center border-b px-4">
+            <SidebarTrigger />
+            <div className="font-bold">AUJ Store Management</div>
+            <ThemeSwitcher />
+          </header>
           {children}
           <Toaster position="top-center" />
         </main>

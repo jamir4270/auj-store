@@ -69,7 +69,7 @@ export const getColumns = (categories: string[]): ColumnDef<Product>[] => [
         } else if (value === "out_of_stock") {
           return "Out of Stock" as string;
         } else {
-          return "NaN" as string;
+          return "N/A" as string;
         }
       };
 

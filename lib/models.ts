@@ -26,28 +26,28 @@ export interface Product {
 }
 
 export interface Order {
-  id: string;
+  id?: string;
   total: number;
   status: OrderStatus;
   partial_payment: number;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
   total_profit: number;
 }
 
 export interface OrderItem {
-  id: string;
+  id?: string;
   order_id: string;
   product_id: string;
   quantity: number;
   unit_price_at_sale: number;
   subtotal: number;
-  created_at: string;
+  created_at?: string;
   profit: number;
 }
 
 export interface PrintJob {
-  id: string;
+  id?: string;
   order_id: string;
   service_type: PrintServiceType;
   paper_type: PrintPaperType;
@@ -56,5 +56,13 @@ export interface PrintJob {
   page_count: number;
   copies: number;
   subtotal: number;
-  created_at: string;
+  created_at?: string;
+}
+
+export interface ProductAtSale extends Product {
+  order_id?: string;
+  amount?: number;
+  unit_price_at_sale?: number;
+  subtotal?: number;
+  profit?: number;
 }
