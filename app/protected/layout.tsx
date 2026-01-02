@@ -14,8 +14,9 @@ import {
   ChartSpline,
   History,
   LayoutDashboard,
-  ReceiptText,
   Warehouse,
+  PrinterIcon,
+  ShoppingBag,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -32,9 +33,14 @@ export default async function ProtectedLayout({
       icon: LayoutDashboard,
     },
     {
-      title: "Orders",
+      title: "Product Sales",
       url: "/protected/main/orders",
-      icon: ReceiptText,
+      icon: ShoppingBag,
+    },
+    {
+      title: "Print Job",
+      url: "/protected/main/print-job",
+      icon: PrinterIcon,
     },
     {
       title: "Inventory",
