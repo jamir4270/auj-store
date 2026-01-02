@@ -132,7 +132,7 @@ export function OrderInterface({ products }: OrderProps) {
             <CardHeader>
               <CardTitle>Order Details</CardTitle>
               <CardDescription>List of orders</CardDescription>
-              <ScrollArea className="h-[50vh] border-2 rounded-2xl">
+              <ScrollArea className="h-[60vh] border-2 rounded-2xl">
                 <div>
                   {orderList.map((order) => {
                     return (
@@ -147,7 +147,7 @@ export function OrderInterface({ products }: OrderProps) {
                 </div>
               </ScrollArea>
             </CardHeader>
-            <CardContent className="flex flex-col gap-3 h-full">
+            <CardContent className="flex flex-col gap-3 h-full justify-end border-t-2">
               <div className="flex flex-row justify-between">
                 <p className="text-2xl">Total: </p>
                 <p className="text-2xl">{twoDecimal(order.total)}</p>
@@ -159,6 +159,7 @@ export function OrderInterface({ products }: OrderProps) {
                 onClick={() => {
                   setSubmit(true);
                 }}
+                disabled={order.total === 0}
               >
                 Submit
               </Button>
