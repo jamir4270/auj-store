@@ -33,6 +33,9 @@ export function OrderInterface({ products }: OrderProps) {
     partial_payment: 0,
   });
   const [submit, setSubmit] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const [productList, setProductList] = useState(products);
+
   console.log(`Parent isOrdering: ${isOrdering}`);
 
   const handleOrderListUpdate = (newList: ProductAtSale[]) => {
@@ -67,7 +70,13 @@ export function OrderInterface({ products }: OrderProps) {
       console.log(`Parent isOrdering: ${isOrdering}`);
       setOrderList(emptyArray);
     }
-  }, [submit]);
+
+    const newProductList = products.filter((product) => {
+      return product.name.toLowerCase().match(searchInput);
+    });
+
+    setProductList(newProductList);
+  }, [submit, searchInput]);
   return (
     <div className="flex flex-row h-screen gap-3 px-3">
       <div className="flex flex-col flex-2 w-full gap-5">
@@ -88,10 +97,18 @@ export function OrderInterface({ products }: OrderProps) {
         </div>
         <Card className="flex flex-col h-[89vh] pb-5">
           <CardHeader className="flex flex-col">
-            <Input type="search" placeholder="Search products..." />
+            <Input
+              type="search"
+              placeholder="Search products..."
+              onChange={(event) =>
+                setTimeout(() => {
+                  setSearchInput(event.target.value);
+                }, 300)
+              }
+            />
             <ScrollArea className="h-[73vh] mt-5">
               <div className="flex flex-col gap-2 mr-5">
-                {products?.map((product) => {
+                {productList?.map((product) => {
                   return (
                     <ProductCard
                       key={product.id}

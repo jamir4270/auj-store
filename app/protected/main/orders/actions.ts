@@ -72,6 +72,7 @@ async function UpdateProductAfterSale(products: ProductAtSale[]) {
         throw error as Error;
       }
 
+      revalidatePath("/protected/orders");
       return status;
     }
   } catch (error) {
