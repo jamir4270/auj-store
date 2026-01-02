@@ -253,6 +253,14 @@ export default function OrderItemCard({
   orderList,
   updateProductList,
 }: OrderItemCardProps) {
+  const [inputValue, setInputValue] = useState<string | number>(
+    product.amount ?? 1
+  );
+
+  useEffect(() => {
+    setInputValue(product.amount ?? 1);
+  }, [product.amount]);
+
   function updateAmount(newAmount: number) {
     if (newAmount < 1) newAmount = 1;
     if (newAmount > product.quantity) newAmount = product.quantity;
@@ -263,7 +271,7 @@ export default function OrderItemCard({
           ...item,
           amount: newAmount,
           subtotal: item.price * newAmount,
-          profit: (item.price - item.cost) * newAmount,
+          profit: (item.price - (item.cost ?? 0)) * newAmount,
           unit_price_at_sale: item.price,
         };
       }
@@ -271,6 +279,19 @@ export default function OrderItemCard({
     });
 
     updateProductList(newOrderList);
+  }
+
+  function handleBlur() {
+    let parsed = parseInt(inputValue.toString());
+
+    if (isNaN(parsed) || parsed < 1) {
+      parsed = 1;
+    } else if (parsed > product.quantity) {
+      parsed = product.quantity;
+    }
+
+    setInputValue(parsed);
+    updateAmount(parsed);
   }
 
   function handleDelete() {
@@ -296,18 +317,20 @@ export default function OrderItemCard({
           <div className="flex flex-row gap-1 items-center">
             <Minus
               className="cursor-pointer"
-              onClick={() => updateAmount((product.amount ?? 2) - 1)}
+              onClick={() => updateAmount((product.amount ?? 1) - 1)}
             />
 
             <Input
               type="number"
               min={1}
               max={product.quantity}
-              value={product.amount ?? 1}
-              onChange={(event) => {
-                const val = event.target.value;
-                const parsed = parseInt(val === "" ? "1" : val);
-                updateAmount(parsed);
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onBlur={handleBlur}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.currentTarget.blur();
+                }
               }}
               className="w-20 text-center"
             />
