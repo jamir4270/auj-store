@@ -232,7 +232,6 @@ function ProductCard({
         className={`p-0 ${
           product.status === "out_of_stock" && "border-red-500"
         } ${
-          isClicked &&
           product.status !== "out_of_stock" &&
           isAlreadyInList &&
           "border-green-400"
