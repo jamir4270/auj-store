@@ -1,3 +1,3 @@
 export default function PrintJob() {
-  return <div>This is Print Job Page.</div>;
+  return <div>{`Still in development! =)`}</div>;
 }
