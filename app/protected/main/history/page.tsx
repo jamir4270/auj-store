@@ -75,7 +75,7 @@ export default function History() {
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {orderItemList.length === 0 ? (
+          {displayList.length === 0 ? (
             <div className="w-full text-center">No items found</div>
           ) : (
             displayList.map((item) => {
