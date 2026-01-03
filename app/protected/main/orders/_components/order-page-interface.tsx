@@ -205,7 +205,6 @@ function ProductCard({
   updateIsOrdering,
   updateProductList,
 }: ProductProps) {
-  const [isClicked, setIsClicked] = useState(false);
   const isAlreadyInList = productList.some((item) => item.id === product.id);
 
   function handleOnClick() {
@@ -221,7 +220,6 @@ function ProductCard({
         };
         const newList: ProductAtSale[] = [...productList, newProduct];
         updateProductList(newList);
-        setIsClicked(true);
       }
     } else {
       updateProductList(productList);
