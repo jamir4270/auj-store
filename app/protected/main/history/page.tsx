@@ -53,7 +53,7 @@ export default function History() {
             Check the store&apos;s recent activities.
           </CardDescription>
           <div className="flex flex-row justify-between mt-8">
-            <div className="text-2xl">{`Found (6) Item/s`}</div>
+            <div className="text-2xl">{`Found (${orderItemList.length}) Item/s`}</div>
             <div className="flex flex-row gap-5">
               <div>
                 <DatePicker
@@ -64,10 +64,14 @@ export default function History() {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
-          {orderItemList.map((item) => {
-            return <OrderItemCard key={item.id} orderItem={item} />;
-          })}
+        <CardContent className="flex flex-col gap-3">
+          {orderItemList.length === 0 ? (
+            <div className="w-full text-center">No items found</div>
+          ) : (
+            orderItemList.map((item) => {
+              return <OrderItemCard key={item.id} orderItem={item} />;
+            })
+          )}
         </CardContent>
       </Card>
     </div>

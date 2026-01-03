@@ -18,13 +18,14 @@ type DatePickerProps = {
 
 export function DatePicker({ handleOrderItemListChange }: DatePickerProps) {
   const [open, setOpen] = useState(false);
-  const [date, setDate] = useState<Date>(new Date());
+  const [date, setDate] = useState<Date | undefined>(new Date());
 
   useEffect(() => {
-    const newDate = date;
-    newDate?.setUTCHours(0, 0, 0, 0);
+    if (!date) return;
+    const newDate = new Date(date);
+    newDate?.setHours(0, 0, 0, 0);
     const nextDate = new Date(newDate);
-    nextDate.setUTCDate(newDate.getUTCDate() + 1);
+    nextDate.setDate(newDate.getDate() + 1);
 
     const updateList = async () => {
       const newList = await fetchOrderItems(
@@ -55,7 +56,7 @@ export function DatePicker({ handleOrderItemListChange }: DatePickerProps) {
           selected={date}
           captionLayout="dropdown"
           onSelect={(newDate) => {
-            setDate(newDate ?? new Date());
+            setDate(newDate);
             setOpen(false);
           }}
         />

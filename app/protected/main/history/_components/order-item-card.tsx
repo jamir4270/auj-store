@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { HistoryOrderItem } from "@/lib/models";
-import { twoDecimal } from "@/lib/utils";
+import { formatDate, twoDecimal } from "@/lib/utils";
 
 type OrderItemProp = {
   orderItem: HistoryOrderItem;
@@ -29,16 +29,18 @@ export function OrderItemCard({ orderItem }: OrderItemProp) {
             <p>{twoDecimal(orderItem.unit_price_at_sale)}</p>
           </div>
           <div className="flex flex-row gap-2">
-            <p>Amount: </p>
+            <p>Quantity: </p>
             <p>{orderItem.quantity}</p>
           </div>
         </div>
         <div className="flex flex-col">
           <div className="text-center">Total</div>
-          <div className="text-3xl">2{twoDecimal(orderItem.subtotal)}</div>
+          <div className="text-3xl">{twoDecimal(orderItem.subtotal)}</div>
         </div>
       </CardContent>
-      <CardFooter>{orderItem.created_at}</CardFooter>
+      <CardFooter>
+        {formatDate(new Date(orderItem.created_at ?? ""))}
+      </CardFooter>
     </Card>
   );
 }
