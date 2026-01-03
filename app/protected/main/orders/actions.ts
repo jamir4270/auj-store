@@ -28,6 +28,7 @@ export async function submitNewOrder(
       return {
         order_id: orderData.id,
         product_id: item.id as string,
+        name: item.name,
         quantity: item.amount ?? 1,
         unit_price_at_sale: item.unit_price_at_sale ?? item.price,
         subtotal: item.subtotal ?? item.price,

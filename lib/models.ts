@@ -36,15 +36,19 @@ export interface Order {
 }
 
 export interface OrderItem {
-  id: string | null;
+  id?: string | null;
   order_id: string;
   product_id: string;
-  name: string | null;
   quantity: number;
   unit_price_at_sale: number;
   subtotal: number;
   created_at?: string;
   profit: number;
+}
+
+export interface HistoryOrderItem extends OrderItem {
+  name: string;
+  category: string;
 }
 
 export interface PrintJob {

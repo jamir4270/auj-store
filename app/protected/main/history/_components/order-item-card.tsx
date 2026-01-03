@@ -5,36 +5,37 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { OrderItem } from "@/lib/models";
+import { HistoryOrderItem } from "@/lib/models";
+import { twoDecimal } from "@/lib/utils";
 
 type OrderItemProp = {
-  orderItem: OrderItem;
+  orderItem: HistoryOrderItem;
 };
 
 export function OrderItemCard({ orderItem }: OrderItemProp) {
   return (
     <Card>
       <CardHeader className="flex flex-row">
-        <CardTitle className="text-2xl p-0">{`Notebook (Big)`}</CardTitle>
+        <CardTitle className="text-2xl p-0">{orderItem.name}</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-row justify-between">
         <div>
           <div className="flex flex-row gap-2">
             <p>Category: </p>
-            <p>School Supplies</p>
+            <p>{orderItem.category}</p>
           </div>
           <div className="flex flex-row gap-2">
             <p>Price: </p>
-            <p>10.00</p>
+            <p>{twoDecimal(orderItem.unit_price_at_sale)}</p>
           </div>
           <div className="flex flex-row gap-2">
             <p>Amount: </p>
-            <p>2</p>
+            <p>{orderItem.quantity}</p>
           </div>
         </div>
         <div className="flex flex-col">
           <div className="text-center">Total</div>
-          <div className="text-3xl">20.00</div>
+          <div className="text-3xl">2{twoDecimal(orderItem.subtotal)}</div>
         </div>
       </CardContent>
       <CardFooter>{`Date: 2025-01-03 05:00 PM`}</CardFooter>

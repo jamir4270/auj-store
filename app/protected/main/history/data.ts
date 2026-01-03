@@ -8,7 +8,7 @@ export async function fetchOrderItems(startDate: string, endDate: string) {
 
     const { data, error } = await supabase
       .from("order_items")
-      .select("*")
+      .select(`*, products (name, category)`)
       .gte("created_at", startDate)
       .lt("created_at", endDate)
       .order("created_at", { ascending: false });
