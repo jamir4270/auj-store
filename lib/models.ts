@@ -36,9 +36,10 @@ export interface Order {
 }
 
 export interface OrderItem {
-  id?: string;
+  id: string | null;
   order_id: string;
   product_id: string;
+  name: string | null;
   quantity: number;
   unit_price_at_sale: number;
   subtotal: number;
