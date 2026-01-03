@@ -3,31 +3,22 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { HistoryOrderItem } from "@/lib/models";
+import { DatePicker } from "./_components/date-picker";
 
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
+import { useEffect, useState } from "react";
+import { fetchOrderItems } from "./data";
+import { OrderItemCard } from "./_components/order-item-card";
 
 export default function History() {
+  const [orderItemList, setOrderItemList] = useState<HistoryOrderItem[]>([]);
+
+  function handleOrderItemListChange(newOrderItemList: HistoryOrderItem[]) {
+    setOrderItemList(newOrderItemList);
+  }
   /*const startDate = new Date();
   startDate.setUTCDate(startDate.getUTCDate() - 1);
   startDate.setUTCHours(0, 0, 0, 0);
@@ -35,10 +26,23 @@ export default function History() {
   endDate.setUTCDate(startDate.getUTCDate() + 1);
   const response: OrderItem[] =
     (await fetchOrderItems(startDate.toISOString(), endDate.toISOString())) ??
-    [];*/
-
-  const [open, setOpen] = useState(false);
-  const [date, setDate] = useState<Date>(new Date());
+    [];
+     */
+  useEffect(() => {
+    const fetchData = async () => {
+      const startDate = new Date();
+      startDate.setUTCDate(startDate.getUTCDate() - 1);
+      startDate.setUTCHours(0, 0, 0, 0);
+      const endDate = new Date(startDate);
+      endDate.setUTCDate(startDate.getUTCDate() + 1);
+      const orderItems = await fetchOrderItems(
+        startDate.toISOString(),
+        endDate.toISOString()
+      );
+      setOrderItemList(orderItems);
+    };
+    fetchData();
+  }, []);
 
   return (
     <div>
@@ -49,59 +53,22 @@ export default function History() {
             Check the store&apos;s recent activities.
           </CardDescription>
           <div className="flex flex-row justify-between mt-8">
-            <div>
-              <Input type="search" className="w-2xl"></Input>
-            </div>
+            <div className="text-2xl">{`Found (6) Item/s`}</div>
             <div className="flex flex-row gap-5">
               <div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger>
-                    <Button>
-                      <p>See History</p> <ChevronDown />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuLabel>Store History</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>Today</DropdownMenuItem>
-                    <DropdownMenuItem>Yesterday</DropdownMenuItem>
-                    <DropdownMenuItem>One Week Ago</DropdownMenuItem>
-                    <DropdownMenuItem>One Month Ago</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <DatePicker
+                  handleOrderItemListChange={handleOrderItemListChange}
+                />
               </div>
-              <div className="flex flex-col gap-3">
-                <Popover open={open} onOpenChange={setOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      id="date"
-                      className="w-48 justify-between font-normal"
-                    >
-                      {date ? date.toLocaleDateString() : "Select date"}
-                      <ChevronDown />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent
-                    className="w-auto overflow-hidden p-0"
-                    align="start"
-                  >
-                    <Calendar
-                      mode="single"
-                      selected={date}
-                      captionLayout="dropdown"
-                      onSelect={(date) => {
-                        setDate(date);
-                        setOpen(false);
-                      }}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
+              <div className="flex flex-col gap-3"></div>
             </div>
           </div>
         </CardHeader>
-        <CardContent></CardContent>
+        <CardContent>
+          {orderItemList.map((item) => {
+            return <OrderItemCard key={item.id} orderItem={item} />;
+          })}
+        </CardContent>
       </Card>
     </div>
   );
