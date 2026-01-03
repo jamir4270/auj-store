@@ -26,22 +26,13 @@ export default function History() {
     setOrderItemList(newOrderItemList);
   }
 
-  /*const startDate = new Date();
-  startDate.setUTCDate(startDate.getUTCDate() - 1);
-  startDate.setUTCHours(0, 0, 0, 0);
-  const endDate = new Date(startDate);
-  endDate.setUTCDate(startDate.getUTCDate() + 1);
-  const response: OrderItem[] =
-    (await fetchOrderItems(startDate.toISOString(), endDate.toISOString())) ??
-    [];
-     */
   useEffect(() => {
     const fetchData = async () => {
       const startDate = new Date();
-      startDate.setUTCDate(startDate.getUTCDate() - 1);
-      startDate.setUTCHours(0, 0, 0, 0);
+      startDate.setDate(startDate.getDate() - 1);
+      startDate.setHours(0, 0, 0, 0);
       const endDate = new Date(startDate);
-      endDate.setUTCDate(startDate.getUTCDate() + 1);
+      endDate.setDate(startDate.getDate() + 1);
       const orderItems = await fetchOrderItems(
         startDate.toISOString(),
         endDate.toISOString()
@@ -55,9 +46,9 @@ export default function History() {
     <div>
       <Card>
         <CardHeader>
-          <CardTitle className="text-3xl">History</CardTitle>
+          <CardTitle className="text-3xl">Sales History</CardTitle>
           <CardDescription className="text-[18px]">
-            Check the store&apos;s recent activities.
+            Check the store&apos;s entire history of sales.
           </CardDescription>
           <div className="flex flex-row justify-between gap-3 mt-8">
             <div className="text-2xl">{`Found (${orderItemList.length}) items`}</div>

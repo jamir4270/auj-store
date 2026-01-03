@@ -53,7 +53,7 @@ export default async function ProtectedLayout({
       icon: ChartSpline,
     },
     {
-      title: "History",
+      title: "Sales History",
       url: "/protected/main/history",
       icon: History,
     },
