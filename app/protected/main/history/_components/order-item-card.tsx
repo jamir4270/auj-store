@@ -38,7 +38,7 @@ export function OrderItemCard({ orderItem }: OrderItemProp) {
           <div className="text-3xl">2{twoDecimal(orderItem.subtotal)}</div>
         </div>
       </CardContent>
-      <CardFooter>{`Date: 2025-01-03 05:00 PM`}</CardFooter>
+      <CardFooter>{orderItem.created_at}</CardFooter>
     </Card>
   );
 }
