@@ -12,13 +12,20 @@ import { DatePicker } from "./_components/date-picker";
 import { useEffect, useState } from "react";
 import { fetchOrderItems } from "./data";
 import { OrderItemCard } from "./_components/order-item-card";
+import { Input } from "@/components/ui/input";
 
 export default function History() {
   const [orderItemList, setOrderItemList] = useState<HistoryOrderItem[]>([]);
+  const [searchValue, setSearchValue] = useState("");
+
+  const displayList: HistoryOrderItem[] = orderItemList.filter((item) => {
+    return item.name.toLowerCase().match(searchValue.toLowerCase());
+  });
 
   function handleOrderItemListChange(newOrderItemList: HistoryOrderItem[]) {
     setOrderItemList(newOrderItemList);
   }
+
   /*const startDate = new Date();
   startDate.setUTCDate(startDate.getUTCDate() - 1);
   startDate.setUTCHours(0, 0, 0, 0);
@@ -52,15 +59,27 @@ export default function History() {
           <CardDescription className="text-[18px]">
             Check the store&apos;s recent activities.
           </CardDescription>
-          <div className="flex flex-row justify-between mt-8">
-            <div className="text-2xl">{`Found (${orderItemList.length}) Item/s`}</div>
-            <div className="flex flex-row gap-5">
+          <div className="flex flex-row justify-between gap-3 mt-8">
+            <div className="text-2xl">{`Found (${orderItemList.length}) items`}</div>
+            <div className="flex flex-row gap-3">
               <div>
-                <DatePicker
-                  handleOrderItemListChange={handleOrderItemListChange}
+                <Input
+                  type="search"
+                  placeholder="Search product..."
+                  onChange={(event) =>
+                    setTimeout(() => {
+                      setSearchValue(event.target.value);
+                    }, 300)
+                  }
                 />
               </div>
-              <div className="flex flex-col gap-3"></div>
+              <div className="flex flex-row gap-5">
+                <div>
+                  <DatePicker
+                    handleOrderItemListChange={handleOrderItemListChange}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </CardHeader>
@@ -68,7 +87,7 @@ export default function History() {
           {orderItemList.length === 0 ? (
             <div className="w-full text-center">No items found</div>
           ) : (
-            orderItemList.map((item) => {
+            displayList.map((item) => {
               return <OrderItemCard key={item.id} orderItem={item} />;
             })
           )}
