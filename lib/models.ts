@@ -47,8 +47,8 @@ export interface OrderItem {
 }
 
 export interface PrintJob {
-  id?: string;
-  order_id: string;
+  id: string | null;
+  order_id: string | null;
   service_type: PrintServiceType;
   paper_type: PrintPaperType;
   paper_size: PrintPaperSizeType;
@@ -56,7 +56,7 @@ export interface PrintJob {
   page_count: number;
   copies: number;
   subtotal: number;
-  created_at?: string;
+  created_at: string | null;
 }
 
 export interface ProductAtSale extends Product {
