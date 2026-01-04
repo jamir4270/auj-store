@@ -1,7 +1,34 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DateTimeCard } from "./_components/date-time";
+import { HistoryOrderItem } from "@/lib/models";
+import { fetchOrderItems } from "../history/data";
+import { twoDecimal } from "@/lib/utils";
 
-export default function Dashboard() {
+export default async function Dashboard() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const nextDay = new Date(today);
+  nextDay.setDate(today.getDate() + 1);
+
+  const items: HistoryOrderItem[] = await fetchOrderItems(
+    today.toISOString(),
+    nextDay.toISOString()
+  );
+
+  const calcTotals = () => {
+    let sales = 0;
+    let products = 0;
+    let profit = 0;
+    for (const item of items) {
+      sales += item.subtotal;
+      products += item.quantity;
+      profit += item.profit;
+    }
+    return { grossSale: sales, totalProducts: products, netProfit: profit };
+  };
+
+  const totals = calcTotals();
+
   return (
     <div className="flex flex-col gap-5 px-5">
       <DateTimeCard />
@@ -10,19 +37,19 @@ export default function Dashboard() {
           <CardHeader>
             <CardTitle>Gross Sales</CardTitle>
           </CardHeader>
-          <CardContent>2000</CardContent>
+          <CardContent>{twoDecimal(totals.grossSale)}</CardContent>
         </Card>
         <Card className="w-full">
           <CardHeader>
             <CardTitle>Net Profit</CardTitle>
           </CardHeader>
-          <CardContent>1000.00</CardContent>
+          <CardContent>{twoDecimal(totals.netProfit)}</CardContent>
         </Card>
         <Card className="w-full">
           <CardHeader>
             <CardTitle>Products Sold</CardTitle>
           </CardHeader>
-          <CardContent>100</CardContent>
+          <CardContent>{totals.totalProducts}</CardContent>
         </Card>
       </div>
       <div className="flex flex-row w-full gap-5">
