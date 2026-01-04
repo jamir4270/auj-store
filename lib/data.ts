@@ -130,3 +130,27 @@ export async function fetchOutOfStockProducts() {
     return [];
   }
 }
+
+export async function fetchLowStockProducts() {
+  try {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase.from("products").select("*");
+
+    if (error) {
+      console.log("Error fetching low stock products: ", error);
+      throw error as Error;
+    }
+
+    const lowStock = data.filter((item) => {
+      return item.quantity < item.stock_threshhold && item.quantity !== 0;
+    });
+
+    return lowStock as Product[];
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching data: ", error.message);
+    }
+    return [];
+  }
+}

@@ -4,7 +4,7 @@ import { HistoryOrderItem, Product } from "@/lib/models";
 import { fetchOrderItems } from "../history/data";
 import { twoDecimal } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { fetchOutOfStockProducts } from "@/lib/data";
+import { fetchLowStockProducts, fetchOutOfStockProducts } from "@/lib/data";
 
 export default async function Dashboard() {
   const today = new Date();
@@ -16,7 +16,9 @@ export default async function Dashboard() {
     today.toISOString(),
     nextDay.toISOString()
   );
-  const lowStockItems: Product[] = await fetchOutOfStockProducts();
+  const outOfStockItems: Product[] = await fetchOutOfStockProducts();
+  const lowStockItems: Product[] = await fetchLowStockProducts();
+  lowStockItems.sort((a, b) => a.quantity - b.quantity);
 
   const calcTotals = () => {
     let sales = 0;
@@ -102,7 +104,7 @@ export default async function Dashboard() {
             </CardHeader>
             <CardContent>
               <ScrollArea className="flex flex-col gap-2 h-[18vh]">
-                {lowStockItems.map((item, index) => {
+                {outOfStockItems.map((item, index) => {
                   return (
                     <div key={item.id}>
                       <p>{`${index + 1}. ${item.name}`}</p>
@@ -116,12 +118,20 @@ export default async function Dashboard() {
             <CardHeader>
               <CardTitle>Low Stock Products</CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col gap-2">
-              <p>1. Ice Water</p>
-              <p>2. Ice Candy</p>
-              <p>3. Ice Pop</p>
-              <p>4. Ice</p>
-              <p>5. Coke Sakto</p>
+            <CardContent>
+              <ScrollArea className="flex flex-col gap-2 h-[18vh]">
+                {lowStockItems.map((item, index) => {
+                  return (
+                    <div
+                      key={item.id}
+                      className="flex flex-row justify-between"
+                    >
+                      <p>{`${index + 1}. ${item.name}`}</p>
+                      <p>{item.quantity}</p>
+                    </div>
+                  );
+                })}
+              </ScrollArea>
             </CardContent>
           </Card>
         </div>
