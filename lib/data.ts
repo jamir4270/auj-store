@@ -1,3 +1,5 @@
+"use server";
+
 import { Product, Order, OrderItem, PrintJob } from "./models";
 import { createClient } from "./supabase/server";
 
@@ -43,6 +45,32 @@ export async function fetchOrders() {
 
   try {
     const { data, error } = await supabase.from("orders").select("*");
+
+    if (error) {
+      throw error;
+    }
+
+    return data as Order[];
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log("Failed to fetch orders: ", error.message);
+      throw error;
+    } else {
+      console.log("Failed to fetch orders: ", String(error));
+      throw error;
+    }
+  }
+}
+
+export async function fetchOrdersWithRange(startDate: string, endDate: string) {
+  const supabase = await createClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*")
+      .gte("created_at", startDate)
+      .lt("created_at", endDate);
 
     if (error) {
       throw error;

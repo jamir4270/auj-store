@@ -2,6 +2,7 @@
 
 import { ChevronDown, TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { useEffect, useState, useMemo } from "react";
 
 import {
   Card,
@@ -17,65 +18,118 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { fetchOrdersWithRange } from "@/lib/data";
+import { Order } from "@/lib/models";
+import { twoDecimal } from "@/lib/utils";
 
-export const description = "A linear line chart";
-
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-  { month: "July", desktop: 220 },
-  { month: "August", desktop: 198 },
-  { month: "September", desktop: 300 },
-  { month: "Octiber", desktop: 320 },
-  { month: "November", desktop: 350 },
-  { month: "December", desktop: 180 },
-];
+type ChartDataPoint = {
+  date: string;
+  originalDate: Date;
+  profit: number;
+};
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "var(--chart-1)",
+  profit: {
+    label: "Profit",
+    color: "hsl(var(--chart-1))",
   },
 } satisfies ChartConfig;
 
-interface ChartData {
-  date: string;
-  value: number;
-}
-
 export function NetProfitChart() {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [chartDatas, setChartData] = useState<ChartData[]>();
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [position, setPosition] = useState("Last 7 Days");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const processData = (orders: Order[]): ChartDataPoint[] => {
+    const groupedData: Record<string, ChartDataPoint> = {};
+
+    orders.forEach((order) => {
+      if (!order.created_at) return;
+
+      const dateObj = new Date(order.created_at);
+
+      const dateKey = dateObj.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+
+      if (!groupedData[dateKey]) {
+        groupedData[dateKey] = {
+          date: dateKey,
+          originalDate: dateObj,
+          profit: 0,
+        };
+      }
+
+      groupedData[dateKey].profit += Number(order.total_profit || 0);
+    });
+
+    return Object.values(groupedData).sort(
+      (a, b) => a.originalDate.getTime() - b.originalDate.getTime()
+    );
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+
+      const end = new Date();
+      const start = new Date();
+
+      let daysToSubtract = 7;
+      if (position === "Last 15 Days") daysToSubtract = 15;
+      if (position === "Last 30 Days") daysToSubtract = 30;
+
+      start.setDate(end.getDate() - daysToSubtract);
+
+      const orders: Order[] = await fetchOrdersWithRange(
+        start.toISOString(),
+        end.toISOString()
+      );
+
+      const processed = processData(orders);
+
+      setStartDate(start);
+      setEndDate(end);
+      setChartData(processed);
+      setIsLoading(false);
+    };
+
+    fetchData();
+  }, [position]);
+
+  const totalProfit = useMemo(() => {
+    return chartData.reduce((acc, curr) => acc + curr.profit, 0);
+  }, [chartData]);
 
   return (
     <Card>
       <CardHeader className="flex flex-row justify-between">
         <div>
           <CardTitle>Net Profit</CardTitle>
-          <CardDescription>January - June 2024</CardDescription>
+          <CardDescription>
+            {startDate.toLocaleDateString("default", { month: "long" })}{" "}
+            {startDate.getDate()} -{" "}
+            {endDate.toLocaleDateString("default", { month: "long" })}{" "}
+            {endDate.getDate()}
+          </CardDescription>
         </div>
         <div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="flex flex-row">
                 {position}
-                <ChevronDown />
+                <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
@@ -98,50 +152,56 @@ export function NetProfitChart() {
         </div>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="overflow-x-auto">
-          <LineChart
-            accessibilityLayer
-            data={chartData}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
-          >
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="month"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tickFormatter={(value) => value.slice(0, 3)}
-            />
-            <YAxis
-              dataKey={"desktop"}
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              domain={[0, 400]}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Line
-              dataKey="desktop"
-              type="linear"
-              stroke="var(--color-foreground)"
-              strokeWidth={2}
-              dot={false}
-            />
-          </LineChart>
-        </ChartContainer>
+        {isLoading ? (
+          <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+            Loading data...
+          </div>
+        ) : (
+          <ChartContainer config={chartConfig} className="overflow-x-auto">
+            <LineChart
+              accessibilityLayer
+              data={chartData}
+              margin={{
+                left: 12,
+                right: 12,
+              }}
+            >
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="date"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+              />
+              <YAxis
+                dataKey="profit"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tickFormatter={(value) => twoDecimal(value)}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+              <Line
+                dataKey="profit"
+                type="linear"
+                stroke="var(--color-profit)"
+                strokeWidth={2}
+                dot={false}
+              />
+            </LineChart>
+          </ChartContainer>
+        )}
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          Total Profit: ₱{totalProfit.toLocaleString()}{" "}
+          <TrendingUp className="h-4 w-4" />
         </div>
         <div className="text-muted-foreground leading-none">
-          Showing total visitors for the last 6 months
+          Showing profit for the selected period
         </div>
       </CardFooter>
     </Card>
