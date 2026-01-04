@@ -2,9 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DateTimeCard } from "./_components/date-time";
 import { HistoryOrderItem, Product } from "@/lib/models";
 import { fetchOrderItems } from "../history/data";
-import { twoDecimal } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { fetchLowStockProducts, fetchOutOfStockProducts } from "@/lib/data";
+import { SummaryCards } from "./_components/summary-cards";
+import { TopProducts } from "./_components/top-products";
+import { OutOfStockProducts } from "./_components/out-of-stock-products";
+import { LowStockProducts } from "./_components/low-stock-products";
 
 export default async function Dashboard() {
   const today = new Date();
@@ -55,85 +58,17 @@ export default async function Dashboard() {
   return (
     <div className="flex flex-col gap-5 px-5">
       <DateTimeCard />
-      <div className="flex flex-row justify-between w-full gap-5">
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle>Gross Sales</CardTitle>
-          </CardHeader>
-          <CardContent>{twoDecimal(totals.grossSale)}</CardContent>
-        </Card>
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle>Net Profit</CardTitle>
-          </CardHeader>
-          <CardContent>{twoDecimal(totals.netProfit)}</CardContent>
-        </Card>
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle>Products Sold</CardTitle>
-          </CardHeader>
-          <CardContent>{totals.totalProducts}</CardContent>
-        </Card>
-      </div>
+      <SummaryCards
+        grossSale={totals.grossSale}
+        netProfit={totals.netProfit}
+        totalProducts={totals.totalProducts}
+      />
       <div className="flex flex-row w-full gap-5">
         <div className="flex-3 w-full h-full flex-col border-2 rounded-2xl"></div>
         <div className="flex flex-1 flex-col gap-3 w-full h-full">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-center">Top 5 Products</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="flex flex-col gap-2 h-[18vh]">
-                {productSalesCount.map((item, index) => {
-                  return (
-                    <div
-                      key={item.name}
-                      className="flex flex-row justify-between"
-                    >
-                      <p>{`${index + 1}. ${item.name}`}</p>
-                      <p>{item.count}</p>
-                    </div>
-                  );
-                })}
-              </ScrollArea>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Out of Stock Products</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="flex flex-col gap-2 h-[18vh]">
-                {outOfStockItems.map((item, index) => {
-                  return (
-                    <div key={item.id}>
-                      <p>{`${index + 1}. ${item.name}`}</p>
-                    </div>
-                  );
-                })}
-              </ScrollArea>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Low Stock Products</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="flex flex-col gap-2 h-[18vh]">
-                {lowStockItems.map((item, index) => {
-                  return (
-                    <div
-                      key={item.id}
-                      className="flex flex-row justify-between"
-                    >
-                      <p>{`${index + 1}. ${item.name}`}</p>
-                      <p>{item.quantity}</p>
-                    </div>
-                  );
-                })}
-              </ScrollArea>
-            </CardContent>
-          </Card>
+          <TopProducts products={productSalesCount} />
+          <OutOfStockProducts products={outOfStockItems} />
+          <LowStockProducts products={lowStockItems} />
         </div>
       </div>
     </div>
