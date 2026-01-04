@@ -12,7 +12,7 @@ export function TopProducts({ products }: TopProductsProp) {
         <CardTitle className="text-center">Top 5 Products</CardTitle>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="flex flex-col gap-2 h-[18vh]">
+        <ScrollArea className="flex flex-col gap-2 h-[18vh] pr-3">
           {products.map((item, index) => {
             return (
               <div key={item.name} className="flex flex-row justify-between">
