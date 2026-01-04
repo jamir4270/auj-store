@@ -7,7 +7,7 @@ type TopProductsProp = {
 
 export function TopProducts({ products }: TopProductsProp) {
   return (
-    <Card>
+    <Card className="border-green-400">
       <CardHeader>
         <CardTitle className="text-center">Top 5 Products</CardTitle>
       </CardHeader>

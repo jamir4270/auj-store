@@ -8,7 +8,7 @@ type LowStockProductsProp = {
 
 export function LowStockProducts({ products }: LowStockProductsProp) {
   return (
-    <Card>
+    <Card className="border-orange-500">
       <CardHeader>
         <CardTitle className="text-center">Low Stock Products</CardTitle>
       </CardHeader>

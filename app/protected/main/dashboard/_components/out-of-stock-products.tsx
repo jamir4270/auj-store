@@ -8,7 +8,7 @@ type OutOfStockProductsProp = {
 
 export function OutOfStockProducts({ products }: OutOfStockProductsProp) {
   return (
-    <Card>
+    <Card className="border-red-500">
       <CardHeader>
         <CardTitle className="text-center">Out of Stock Products</CardTitle>
       </CardHeader>

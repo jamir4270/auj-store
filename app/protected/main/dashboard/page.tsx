@@ -1,15 +1,13 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DateTimeCard } from "./_components/date-time";
 import { HistoryOrderItem, Product } from "@/lib/models";
 import { fetchOrderItems } from "../history/data";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { fetchLowStockProducts, fetchOutOfStockProducts } from "@/lib/data";
 import { SummaryCards } from "./_components/summary-cards";
 import { TopProducts } from "./_components/top-products";
 import { OutOfStockProducts } from "./_components/out-of-stock-products";
 import { LowStockProducts } from "./_components/low-stock-products";
-import { NetProfitChart } from "./_components/charts";
 import { calcTotals, getProductSalesCount } from "./utils";
+import { Charts } from "./_components/charts";
 
 export default async function Dashboard() {
   const today = new Date();
@@ -38,10 +36,8 @@ export default async function Dashboard() {
         totalProducts={totals.totalProducts}
       />
       <div className="flex flex-row w-full gap-5">
-        <div className="flex-3 w-full h-full flex-col border-2 rounded-2xl">
-          <NetProfitChart />
-        </div>
-        <div className="flex flex-1 flex-col gap-3 w-full h-full">
+        <Charts />
+        <div className="flex flex-1 flex-col gap-3 w-full h-full justify-between">
           <TopProducts products={productSalesCount} />
           <OutOfStockProducts products={outOfStockItems} />
           <LowStockProducts products={lowStockItems} />

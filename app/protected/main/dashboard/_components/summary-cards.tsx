@@ -1,5 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { twoDecimal } from "@/lib/utils";
+import { DollarSign, TrendingUp, Package, PhilippinePeso } from "lucide-react";
 
 type SummaryCardProps = {
   grossSale: number;
@@ -13,24 +14,42 @@ export function SummaryCards({
   totalProducts,
 }: SummaryCardProps) {
   return (
-    <div className="flex flex-row justify-between w-full gap-5">
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Gross Sales</CardTitle>
+    <div className="grid gap-4 md:grid-cols-3 w-full">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Gross Sales</CardTitle>
+          <PhilippinePeso className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
-        <CardContent>{twoDecimal(grossSale)}</CardContent>
+        <CardContent>
+          <div className="text-2xl font-bold">{twoDecimal(grossSale)}</div>
+          <p className="text-xs text-muted-foreground">
+            Total revenue generated
+          </p>
+        </CardContent>
       </Card>
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Net Profit</CardTitle>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Net Profit</CardTitle>
+          <TrendingUp className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
-        <CardContent>{twoDecimal(netProfit)}</CardContent>
+        <CardContent>
+          <div className="text-2xl font-bold">{twoDecimal(netProfit)}</div>
+          <p className="text-xs text-muted-foreground">
+            Total earnings after costs
+          </p>
+        </CardContent>
       </Card>
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>Products Sold</CardTitle>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Products Sold</CardTitle>
+          <Package className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
-        <CardContent>{totalProducts}</CardContent>
+        <CardContent>
+          <div className="text-2xl font-bold">{totalProducts}</div>
+          <p className="text-xs text-muted-foreground">Total items ordered</p>
+        </CardContent>
       </Card>
     </div>
   );
