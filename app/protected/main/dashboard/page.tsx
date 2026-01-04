@@ -1,12 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DateTimeCard } from "./_components/date-time";
 
 export default function Dashboard() {
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex flex-row justify-between">
-        <div>Date Here</div>
-        <div>Time Here</div>
-      </div>
+    <div className="flex flex-col gap-5 px-5">
+      <DateTimeCard />
       <div className="flex flex-row justify-between w-full gap-5">
         <Card className="w-full">
           <CardHeader>
