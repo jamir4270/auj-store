@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { twoDecimal } from "@/lib/utils";
-import { DollarSign, TrendingUp, Package, PhilippinePeso } from "lucide-react";
+import { TrendingUp, Package, PhilippinePeso } from "lucide-react";
 
 type SummaryCardProps = {
   grossSale: number;
