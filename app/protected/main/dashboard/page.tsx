@@ -1,8 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DateTimeCard } from "./_components/date-time";
-import { HistoryOrderItem } from "@/lib/models";
+import { HistoryOrderItem, Product } from "@/lib/models";
 import { fetchOrderItems } from "../history/data";
 import { twoDecimal } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { fetchOutOfStockProducts } from "@/lib/data";
 
 export default async function Dashboard() {
   const today = new Date();
@@ -14,6 +16,7 @@ export default async function Dashboard() {
     today.toISOString(),
     nextDay.toISOString()
   );
+  const lowStockItems: Product[] = await fetchOutOfStockProducts();
 
   const calcTotals = () => {
     let sales = 0;
@@ -27,7 +30,25 @@ export default async function Dashboard() {
     return { grossSale: sales, totalProducts: products, netProfit: profit };
   };
 
+  function getProductSalesCount(items: HistoryOrderItem[]) {
+    const salesMap = items.reduce((acc, item) => {
+      const currentCount = acc[item.name] || 0;
+
+      acc[item.name] = currentCount + item.quantity;
+
+      return acc;
+    }, {} as Record<string, number>);
+
+    const result = Object.entries(salesMap).map(([name, count]) => ({
+      name,
+      count,
+    }));
+
+    return result.sort((a, b) => a.count - b.count);
+  }
+
   const totals = calcTotals();
+  const productSalesCount = getProductSalesCount(items);
 
   return (
     <div className="flex flex-col gap-5 px-5">
@@ -57,26 +78,38 @@ export default async function Dashboard() {
         <div className="flex flex-1 flex-col gap-3 w-full h-full">
           <Card>
             <CardHeader>
-              <CardTitle>Top 5 Products</CardTitle>
+              <CardTitle className="text-center">Top 5 Products</CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col gap-2">
-              <p>1. Ice Water</p>
-              <p>2. Ice Candy</p>
-              <p>3. Ice Pop</p>
-              <p>4. Ice</p>
-              <p>5. Coke Sakto</p>
+            <CardContent>
+              <ScrollArea className="flex flex-col gap-2 h-[18vh]">
+                {productSalesCount.map((item, index) => {
+                  return (
+                    <div
+                      key={item.name}
+                      className="flex flex-row justify-between"
+                    >
+                      <p>{`${index + 1}. ${item.name}`}</p>
+                      <p>{item.count}</p>
+                    </div>
+                  );
+                })}
+              </ScrollArea>
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
               <CardTitle>Out of Stock Products</CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col gap-2">
-              <p>1. Ice Water</p>
-              <p>2. Ice Candy</p>
-              <p>3. Ice Pop</p>
-              <p>4. Ice</p>
-              <p>5. Coke Sakto</p>
+            <CardContent>
+              <ScrollArea className="flex flex-col gap-2 h-[18vh]">
+                {lowStockItems.map((item, index) => {
+                  return (
+                    <div key={item.id}>
+                      <p>{`${index + 1}. ${item.name}`}</p>
+                    </div>
+                  );
+                })}
+              </ScrollArea>
             </CardContent>
           </Card>
           <Card>

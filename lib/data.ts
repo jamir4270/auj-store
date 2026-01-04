@@ -107,3 +107,26 @@ export async function fetchPrintJobs(id: string) {
     }
   }
 }
+
+export async function fetchOutOfStockProducts() {
+  try {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("quantity", 0);
+
+    if (error) {
+      console.log("Error fetching out of stock products: ", error);
+      throw error as Error;
+    }
+
+    return data as Product[];
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching data: ", error.message);
+    }
+    return [];
+  }
+}
