@@ -8,6 +8,8 @@ import { SummaryCards } from "./_components/summary-cards";
 import { TopProducts } from "./_components/top-products";
 import { OutOfStockProducts } from "./_components/out-of-stock-products";
 import { LowStockProducts } from "./_components/low-stock-products";
+import { NetProfitChart } from "./_components/charts";
+import { calcTotals, getProductSalesCount } from "./utils";
 
 export default async function Dashboard() {
   const today = new Date();
@@ -19,40 +21,12 @@ export default async function Dashboard() {
     today.toISOString(),
     nextDay.toISOString()
   );
+
   const outOfStockItems: Product[] = await fetchOutOfStockProducts();
   const lowStockItems: Product[] = await fetchLowStockProducts();
   lowStockItems.sort((a, b) => a.quantity - b.quantity);
 
-  const calcTotals = () => {
-    let sales = 0;
-    let products = 0;
-    let profit = 0;
-    for (const item of items) {
-      sales += item.subtotal;
-      products += item.quantity;
-      profit += item.profit;
-    }
-    return { grossSale: sales, totalProducts: products, netProfit: profit };
-  };
-
-  function getProductSalesCount(items: HistoryOrderItem[]) {
-    const salesMap = items.reduce((acc, item) => {
-      const currentCount = acc[item.name] || 0;
-
-      acc[item.name] = currentCount + item.quantity;
-
-      return acc;
-    }, {} as Record<string, number>);
-
-    const result = Object.entries(salesMap).map(([name, count]) => ({
-      name,
-      count,
-    }));
-
-    return result.sort((a, b) => a.count - b.count);
-  }
-
-  const totals = calcTotals();
+  const totals = calcTotals(items);
   const productSalesCount = getProductSalesCount(items);
 
   return (
@@ -64,7 +38,9 @@ export default async function Dashboard() {
         totalProducts={totals.totalProducts}
       />
       <div className="flex flex-row w-full gap-5">
-        <div className="flex-3 w-full h-full flex-col border-2 rounded-2xl"></div>
+        <div className="flex-3 w-full h-full flex-col border-2 rounded-2xl">
+          <NetProfitChart />
+        </div>
         <div className="flex flex-1 flex-col gap-3 w-full h-full">
           <TopProducts products={productSalesCount} />
           <OutOfStockProducts products={outOfStockItems} />
