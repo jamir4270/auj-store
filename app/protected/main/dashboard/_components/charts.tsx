@@ -1,63 +1,113 @@
 "use client";
 
 import { useState } from "react";
-import { AccumulatedProfitChart } from "./accumulated-profit-chart";
-import { NetProfitChart } from "./net-profit-chart";
 import { cn } from "@/lib/utils";
 
+import { AccumulatedProfitChart } from "./accumulated-profit-chart";
+import { NetProfitChart } from "./net-profit-chart";
+
+import { DailySalesChart } from "./daily-sales-chart";
+import { AccumulatedSalesChart } from "./accumulated-sales-chart";
+
+type MetricMode = "profit" | "sales";
+type ViewMode = "daily" | "accumulated";
+
 export function Charts() {
-  const [viewMode, setViewMode] = useState<"daily" | "accumulated">("daily");
+  const [metric, setMetric] = useState<MetricMode>("profit");
+  const [viewMode, setViewMode] = useState<ViewMode>("daily");
+
+  const renderChart = () => {
+    if (metric === "profit") {
+      return viewMode === "daily" ? (
+        <NetProfitChart />
+      ) : (
+        <AccumulatedProfitChart />
+      );
+    } else {
+      return viewMode === "daily" ? (
+        <DailySalesChart />
+      ) : (
+        <AccumulatedSalesChart />
+      );
+    }
+  };
+
+  const getDescription = () => {
+    const metricText = metric === "profit" ? "net profit" : "gross sales";
+    const viewText = viewMode === "daily" ? "per day" : "growth over time";
+    return `View your ${metricText} ${viewText}.`;
+  };
 
   return (
     <div className="flex flex-col flex-3 w-full h-full border rounded-xl bg-card text-card-foreground shadow-sm gap-5">
-      <div className="flex flex-row items-center justify-between p-6 pb-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 pb-2 gap-4">
         <div className="space-y-1">
           <h3 className="font-semibold leading-none tracking-tight">
-            Revenue Analytics
+            {metric === "profit" ? "Profit Analytics" : "Sales Analytics"}
           </h3>
-          <p className="text-sm text-muted-foreground">
-            {viewMode === "daily"
-              ? "View your net profit per day."
-              : "View your total profit growth over time."}
-          </p>
+          <p className="text-sm text-muted-foreground">{getDescription()}</p>
         </div>
 
-        <div className="flex items-center p-1 bg-muted rounded-lg border">
-          <button
-            onClick={() => setViewMode("daily")}
-            className={cn(
-              "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
-              viewMode === "daily"
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            Daily Net
-          </button>
-          <button
-            onClick={() => setViewMode("accumulated")}
-            className={cn(
-              "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
-              viewMode === "accumulated"
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            Accumulated
-          </button>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex items-center p-1 bg-muted rounded-lg border">
+            <button
+              onClick={() => setMetric("profit")}
+              className={cn(
+                "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
+                metric === "profit"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Profit
+            </button>
+            <button
+              onClick={() => setMetric("sales")}
+              className={cn(
+                "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
+                metric === "sales"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Sales
+            </button>
+          </div>
+
+          <div className="flex items-center p-1 bg-muted rounded-lg border">
+            <button
+              onClick={() => setViewMode("daily")}
+              className={cn(
+                "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
+                viewMode === "daily"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Daily
+            </button>
+            <button
+              onClick={() => setViewMode("accumulated")}
+              className={cn(
+                "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
+                viewMode === "accumulated"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              Accumulated
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="p-6 pt-0 flex-1 min-h-0">
-        {viewMode === "daily" ? (
-          <div className="animate-in fade-in zoom-in-95 duration-300">
-            <NetProfitChart />
-          </div>
-        ) : (
-          <div className="animate-in fade-in zoom-in-95 duration-300">
-            <AccumulatedProfitChart />
-          </div>
-        )}
+        <div
+          key={`${metric}-${viewMode}`}
+          className="animate-in fade-in zoom-in-95 duration-300"
+        >
+          {renderChart()}
+        </div>
       </div>
     </div>
   );
