@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Dashboard() {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-5">
       <div className="flex flex-row justify-between">
         <div>Date Here</div>
         <div>Time Here</div>
@@ -26,6 +26,47 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>100</CardContent>
         </Card>
+      </div>
+      <div className="flex flex-row w-full gap-5">
+        <div className="flex-3 w-full h-full flex-col border-2 rounded-2xl"></div>
+        <div className="flex flex-1 flex-col gap-3 w-full h-full">
+          <Card>
+            <CardHeader>
+              <CardTitle>Top 5 Products</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              <p>1. Ice Water</p>
+              <p>2. Ice Candy</p>
+              <p>3. Ice Pop</p>
+              <p>4. Ice</p>
+              <p>5. Coke Sakto</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Out of Stock Products</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              <p>1. Ice Water</p>
+              <p>2. Ice Candy</p>
+              <p>3. Ice Pop</p>
+              <p>4. Ice</p>
+              <p>5. Coke Sakto</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Low Stock Products</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              <p>1. Ice Water</p>
+              <p>2. Ice Candy</p>
+              <p>3. Ice Pop</p>
+              <p>4. Ice</p>
+              <p>5. Coke Sakto</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
