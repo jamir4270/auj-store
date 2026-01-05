@@ -26,5 +26,5 @@ export const getProductSalesCount = (items: HistoryOrderItem[]) => {
     count,
   }));
 
-  return result.sort((a, b) => a.count - b.count);
+  return result.sort((a, b) => b.count - a.count);
 };
