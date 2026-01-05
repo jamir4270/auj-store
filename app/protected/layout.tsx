@@ -1,55 +1,81 @@
-import { DeployButton } from "@/components/deploy-button";
-import { EnvVarWarning } from "@/components/env-var-warning";
-import { AuthButton } from "@/components/auth-button";
+import { cookies } from "next/headers";
+import { AppSidebar } from "@/components/app-sidebar";
+import { Toaster } from "@/components/ui/sonner";
+import {
+  SidebarTrigger,
+  SidebarProvider,
+  SidebarInset,
+} from "@/components/ui/sidebar";
+import { SidebarProp } from "@/components/app-sidebar";
 import { ThemeSwitcher } from "@/components/theme-switcher";
-import { hasEnvVars } from "@/lib/utils";
-import Link from "next/link";
-import { Suspense } from "react";
+import "../globals.css";
 
-export default function ProtectedLayout({
+import {
+  ChartSpline,
+  History,
+  LayoutDashboard,
+  Warehouse,
+  PrinterIcon,
+  ShoppingBag,
+} from "lucide-react";
+
+export const dynamic = "force-dynamic";
+
+export default async function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col gap-20 items-center">
-        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-          <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-            <div className="flex gap-5 items-center font-semibold">
-              <Link href={"/"}>Next.js Supabase Starter</Link>
-              <div className="flex items-center gap-2">
-                <DeployButton />
-              </div>
-            </div>
-            {!hasEnvVars ? (
-              <EnvVarWarning />
-            ) : (
-              <Suspense>
-                <AuthButton />
-              </Suspense>
-            )}
-          </div>
-        </nav>
-        <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5">
-          {children}
-        </div>
+  const routes: SidebarProp[] = [
+    {
+      title: "Dashboard",
+      url: "/protected/main/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      title: "Product Sales",
+      url: "/protected/main/orders",
+      icon: ShoppingBag,
+    },
+    {
+      title: "Print Job",
+      url: "/protected/main/print-job",
+      icon: PrinterIcon,
+    },
+    {
+      title: "Inventory",
+      url: "/protected/main/inventory",
+      icon: Warehouse,
+    },
+    {
+      title: "Analytics",
+      url: "/protected/main/analytics",
+      icon: ChartSpline,
+    },
+    {
+      title: "Sales History",
+      url: "/protected/main/history",
+      icon: History,
+    },
+  ];
 
-        <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
-          <p>
-            Powered by{" "}
-            <a
-              href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-              target="_blank"
-              className="font-bold hover:underline"
-              rel="noreferrer"
-            >
-              Supabase
-            </a>
-          </p>
-          <ThemeSwitcher />
-        </footer>
-      </div>
-    </main>
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+
+  return (
+    <SidebarProvider defaultOpen={defaultOpen}>
+      <AppSidebar routes={routes} />
+      <SidebarInset>
+        <main className="flex w-full h-full flex-col gap-4 p-4">
+          <header className="flex flex-row justify-between w-full h-14 shrink-0 items-center border-b px-4">
+            <SidebarTrigger />
+            <div className="font-bold">AUJ Store Management</div>
+            <ThemeSwitcher />
+          </header>
+          {children}
+          <Toaster position="top-center" />
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
