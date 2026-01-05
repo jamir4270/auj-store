@@ -1,12 +1,10 @@
 import { LoginForm } from "@/components/login-form";
 import { ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { Toaster } from "sonner";
 
 export default function LoginPage() {
   return (
     <div>
-      <Toaster position="top-right" />
       <div className="grid min-h-svh lg:grid-cols-2">
         <div className="relative hidden lg:flex flex-col p-10 text-white dark:border-r bg-[#0A58A3] overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/40" />
