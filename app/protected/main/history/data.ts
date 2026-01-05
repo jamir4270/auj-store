@@ -21,9 +21,20 @@ export async function fetchOrderItems(
       console.log(error);
       throw error as Error;
     }
-    console.log(data);
+    if (!data) return [];
 
+    // SAFE MAPPING
     const cleanData: HistoryOrderItem[] = data.map((item) => {
+      // 1. Safety check for the relationship
+      if (!item.products) {
+        console.warn(`⚠️ Order Item ${item.id} has no linked Product!`);
+        return {
+          ...item,
+          name: "Unknown Product",
+          category: "Uncategorized",
+        };
+      }
+
       return {
         id: item.id,
         order_id: item.order_id,
@@ -38,7 +49,7 @@ export async function fetchOrderItems(
       };
     });
 
-    return cleanData as HistoryOrderItem[];
+    return cleanData;
   } catch (error) {
     if (error instanceof Error) {
       console.error("Failed to fetch order items: ", error.message);
