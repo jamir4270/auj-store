@@ -19,6 +19,7 @@ export async function submitNewOrder(
       .single();
 
     if (orderError) {
+      console.log("Failed to make order: ", orderError);
       throw orderError as Error;
     }
 
@@ -28,7 +29,6 @@ export async function submitNewOrder(
       return {
         order_id: orderData.id,
         product_id: item.id as string,
-        name: item.name,
         quantity: item.amount ?? 1,
         unit_price_at_sale: item.unit_price_at_sale ?? item.price,
         subtotal: item.subtotal ?? item.price,
@@ -42,11 +42,14 @@ export async function submitNewOrder(
       .select();
 
     if (itemError) {
+      console.log("Failed to make order items: ", itemError);
       throw itemError as Error;
     }
 
     console.log(orderItemData);
     const status = UpdateProductAfterSale(orderItems);
+
+    console.log("Update item status: ", status);
 
     revalidatePath("/protected/orders");
     return status;

@@ -9,8 +9,7 @@ import {
 import { HistoryOrderItem } from "@/lib/models";
 import { DatePicker } from "./_components/date-picker";
 
-import { useEffect, useState } from "react";
-import { fetchOrderItems } from "./data";
+import { useState } from "react";
 import { OrderItemCard } from "./_components/order-item-card";
 import { Input } from "@/components/ui/input";
 
@@ -26,21 +25,22 @@ export default function History() {
     setOrderItemList(newOrderItemList);
   }
 
-  useEffect(() => {
+  /*useEffect(() => {
     const fetchData = async () => {
       const startDate = new Date();
-      startDate.setDate(startDate.getDate() - 1);
-      startDate.setHours(0, 0, 0, 0);
+      startDate.setUTCDate(startDate.getUTCDate() - 1);
+      startDate.setUTCHours(0, 0, 0, 0);
       const endDate = new Date(startDate);
-      endDate.setDate(startDate.getDate() + 1);
+      endDate.setDate(startDate.getUTCDate() + 1);
       const orderItems = await fetchOrderItems(
         startDate.toISOString(),
         endDate.toISOString()
       );
+      console.log(`First render: ${orderItems}`);
       setOrderItemList(orderItems);
     };
     fetchData();
-  }, []);
+  }, []);*/
 
   return (
     <div>

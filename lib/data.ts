@@ -1,3 +1,5 @@
+"use server";
+
 import { Product, Order, OrderItem, PrintJob } from "./models";
 import { createClient } from "./supabase/server";
 
@@ -60,6 +62,32 @@ export async function fetchOrders() {
   }
 }
 
+export async function fetchOrdersWithRange(startDate: string, endDate: string) {
+  const supabase = await createClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*")
+      .gte("created_at", startDate)
+      .lt("created_at", endDate);
+
+    if (error) {
+      throw error;
+    }
+
+    return data as Order[];
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log("Failed to fetch orders: ", error.message);
+      throw error;
+    } else {
+      console.log("Failed to fetch orders: ", String(error));
+      throw error;
+    }
+  }
+}
+
 export async function fetchOrderItems(id: string) {
   const supabase = await createClient();
 
@@ -105,5 +133,52 @@ export async function fetchPrintJobs(id: string) {
     } else {
       console.log("Failed to fetch order items: ", String(error));
     }
+  }
+}
+
+export async function fetchOutOfStockProducts() {
+  try {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("quantity", 0);
+
+    if (error) {
+      console.log("Error fetching out of stock products: ", error);
+      throw error as Error;
+    }
+
+    return data as Product[];
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching data: ", error.message);
+    }
+    return [];
+  }
+}
+
+export async function fetchLowStockProducts() {
+  try {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase.from("products").select("*");
+
+    if (error) {
+      console.log("Error fetching low stock products: ", error);
+      throw error as Error;
+    }
+
+    const lowStock = data.filter((item) => {
+      return item.quantity < item.stock_threshhold && item.quantity !== 0;
+    });
+
+    return lowStock as Product[];
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Error fetching data: ", error.message);
+    }
+    return [];
   }
 }
