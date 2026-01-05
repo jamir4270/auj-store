@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { LockKeyhole } from "lucide-react"; // Assuming you have lucide-react (standard with shadcn)
 
 export function UpdatePasswordForm({
   className,
@@ -33,8 +34,7 @@ export function UpdatePasswordForm({
     try {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push("/protected");
+      router.push("/protected/main/dashboard");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
@@ -44,30 +44,46 @@ export function UpdatePasswordForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Reset Your Password</CardTitle>
-          <CardDescription>
-            Please enter your new password below.
+      <Card className="w-full max-w-sm mx-auto shadow-md">
+        <CardHeader className="items-center text-center space-y-2">
+          {/* Added an Icon for visual context */}
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-2">
+            <LockKeyhole className="h-6 w-6 text-primary" />
+          </div>
+          <CardTitle className="text-xl font-bold">Set new password</CardTitle>
+          <CardDescription className="text-center">
+            Please enter a secure password to access your account.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleForgotPassword}>
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="password">New password</Label>
+                <Label htmlFor="password">New Password</Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="New password"
+                  placeholder="••••••••"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  className="bg-muted/30"
                 />
               </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Saving..." : "Save new password"}
+
+              {/* Styled Error Message */}
+              {error && (
+                <div className="text-sm font-medium text-destructive bg-destructive/10 p-3 rounded-md text-center">
+                  {error}
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                className="w-full mt-2"
+                disabled={isLoading}
+              >
+                {isLoading ? "Updating..." : "Update password"}
               </Button>
             </div>
           </form>
