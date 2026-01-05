@@ -11,8 +11,9 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 
-import { LucideIcon, LogOut } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 import Link from "next/link";
+import { LogoutButton } from "./logout-button";
 
 export type SidebarProp = {
   title: string;
@@ -64,10 +65,7 @@ export function AppSidebar({ routes }: SidebarProps) {
             className="w-full items-center justify-center bg-primary text-primary-foreground shadow hover:bg-primary/90"
             asChild
           >
-            <Link href="/">
-              <LogOut />
-              <span>Log out</span>
-            </Link>
+            <LogoutButton />
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarFooter>
