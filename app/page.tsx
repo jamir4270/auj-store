@@ -1,86 +1,51 @@
-import { LoginForm } from "@/components/login-form";
-import { ShieldCheck } from "lucide-react";
+import { DeployButton } from "@/components/deploy-button";
+import { AuthButton } from "@/components/auth-button";
+import { Hero } from "@/components/hero";
+import { ThemeSwitcher } from "@/components/theme-switcher";
+import { SignUpUserSteps } from "@/components/tutorial/sign-up-user-steps";
 import Link from "next/link";
-import { Toaster } from "sonner";
+import { Suspense } from "react";
 
-export default function LoginPage() {
+export default function Home() {
   return (
-    <div>
-      <Toaster position="top-right" />
-      <div className="grid min-h-svh lg:grid-cols-2">
-        <div className="relative hidden lg:flex flex-col p-10 text-white dark:border-r bg-[#0A58A3] overflow-hidden">
-          <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/40" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl pointer-events-none" />
-
-          <Link href="/">
-            <div className="relative z-20 flex items-center text-lg font-medium gap-2">
-              <span className="tracking-tight font-semibold">
-                AUJ Store Management
-              </span>
-            </div>
-          </Link>
-
-          <div className="relative z-20 flex-1 flex flex-col justify-center items-start gap-8">
-            <div className="space-y-2">
-              <h2 className="text-5xl font-extrabold tracking-tight text-white/90">
-                Inventory.
-              </h2>
-              <h2 className="text-5xl font-extrabold tracking-tight text-white/70">
-                Sales.
-              </h2>
-              <h2 className="text-5xl font-extrabold tracking-tight text-white/40">
-                Analytics.
-              </h2>
-            </div>
-
-            <div className="h-1 w-20 bg-emerald-400 rounded-full" />
-
-            <p className="max-w-sm text-lg text-blue-100 font-light leading-relaxed">
-              Streamlining operations for school supplies, goods, and print
-              services through accurate recording and auditing.
-            </p>
-          </div>
-
-          <div className="relative z-20 mt-auto">
-            <blockquote className="space-y-2">
-              <div className="flex gap-1 mb-4">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <ShieldCheck
-                    key={i}
-                    className="w-5 h-5 text-emerald-400 fill-emerald-400/20"
-                  />
-                ))}
+    <main className="min-h-screen flex flex-col items-center">
+      <div className="flex-1 w-full flex flex-col gap-20 items-center">
+        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
+          <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
+            <div className="flex gap-5 items-center font-semibold">
+              <Link href={"/"}>Next.js Supabase Starter</Link>
+              <div className="flex items-center gap-2">
+                <DeployButton />
               </div>
-              <p className="text-lg font-medium leading-relaxed text-blue-50">
-                &ldquo;Efficiency is the heartbeat of our store. This system
-                ensures every item sold and every document printed is accounted
-                for with precision.&rdquo;
-              </p>
-              <footer className="text-sm text-blue-200 mt-4">
-                — AUJ Store Administration
-              </footer>
-            </blockquote>
+            </div>
+            <Suspense>
+              <AuthButton />
+            </Suspense>
           </div>
+        </nav>
+        <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5">
+          <Hero />
+          <main className="flex-1 flex flex-col gap-6 px-4">
+            <h2 className="font-medium text-xl mb-4">Next steps</h2>
+            <SignUpUserSteps />
+          </main>
         </div>
 
-        <div className="flex flex-col gap-4 p-6 md:p-10">
-          <div className="flex flex-1 items-center justify-center">
-            <div className="w-full max-w-xs space-y-6">
-              <div className="lg:hidden flex flex-col items-center text-center gap-2 mb-8">
-                <div className="h-12 w-12 bg-blue-50 text-[#0A58A3] rounded-xl flex items-center justify-center mb-2">
-                  <p>AUJ</p>
-                </div>
-                <h1 className="text-xl font-bold">AUJ Store</h1>
-                <p className="text-sm text-muted-foreground">
-                  Sign in to manage inventory
-                </p>
-              </div>
-
-              <LoginForm />
-            </div>
-          </div>
-        </div>
+        <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
+          <p>
+            Powered by{" "}
+            <a
+              href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
+              target="_blank"
+              className="font-bold hover:underline"
+              rel="noreferrer"
+            >
+              Supabase
+            </a>
+          </p>
+          <ThemeSwitcher />
+        </footer>
       </div>
-    </div>
+    </main>
   );
 }
