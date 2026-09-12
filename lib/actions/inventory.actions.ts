@@ -20,6 +20,7 @@ export async function addProduct(input: unknown): Promise<ActionResult<Product>>
     const { data, error } = await supabase
       .from("products")
       .insert({
+        barcode: parsed.data.barcode,
         name: parsed.data.name,
         category: parsed.data.category,
         quantity: parsed.data.quantity,
@@ -33,6 +34,9 @@ export async function addProduct(input: unknown): Promise<ActionResult<Product>>
       .single();
 
     if (error) {
+      if (error.code === "23505") {
+        return { success: false, error: "A product with this barcode already exists." };
+      }
       return { success: false, error: error.message };
     }
 
@@ -63,6 +67,7 @@ export async function editProduct(input: unknown): Promise<ActionResult<Product>
     const { data, error } = await supabase
       .from("products")
       .update({
+        barcode: parsed.data.barcode,
         name: parsed.data.name,
         category: parsed.data.category,
         quantity: parsed.data.quantity,
@@ -76,6 +81,9 @@ export async function editProduct(input: unknown): Promise<ActionResult<Product>
       .single();
 
     if (error) {
+      if (error.code === "23505") {
+        return { success: false, error: "A product with this barcode already exists." };
+      }
       return { success: false, error: error.message };
     }
 
@@ -140,6 +148,80 @@ export async function addStock(input: unknown): Promise<ActionResult<Product>> {
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to adjust stock.",
+    };
+  }
+}
+
+export async function getProductByBarcode(barcode: string): Promise<ActionResult<Product | null>> {
+  try {
+    const trimmed = barcode?.trim();
+    if (!trimmed) {
+      return { success: true, data: null };
+    }
+
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("barcode", trimmed)
+      .maybeSingle();
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data: (data as Product) || null };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to look up barcode.",
+    };
+  }
+}
+
+export async function quickCreateAndSellProduct(input: unknown): Promise<ActionResult<Product>> {
+  try {
+    const parsed = ProductSchema.safeParse(input);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: parsed.error.issues[0]?.message || "Invalid product details.",
+      };
+    }
+
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("products")
+      .insert({
+        barcode: parsed.data.barcode,
+        name: parsed.data.name,
+        category: parsed.data.category,
+        quantity: parsed.data.quantity,
+        stock_threshold: parsed.data.stock_threshold,
+        cost: parsed.data.cost,
+        price: parsed.data.price,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    if (error) {
+      if (error.code === "23505") {
+        return { success: false, error: "A product with this barcode already exists." };
+      }
+      return { success: false, error: error.message };
+    }
+
+    revalidatePath("/inventory");
+    revalidatePath("/orders");
+    revalidatePath("/dashboard");
+
+    return { success: true, data: data as Product };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to create product for sale.",
     };
   }
 }
