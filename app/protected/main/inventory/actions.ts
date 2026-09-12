@@ -56,7 +56,7 @@ export async function editProduct(product: Product) {
         name: product.name,
         category: product.category,
         quantity: product.quantity,
-        stock_threshhold: product.stock_threshhold,
+        stock_threshold: product.stock_threshold,
         cost: product.cost,
         price: product.price,
         updated_at: product.updated_at,

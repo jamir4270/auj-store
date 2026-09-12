@@ -20,9 +20,9 @@ export async function fetchProducts(): Promise<Product[]> {
       return {
         ...item,
         status:
-          item.quantity >= item.stock_threshhold
+          item.quantity >= item.stock_threshold
             ? "in_stock"
-            : item.quantity < item.stock_threshhold && item.quantity != 0
+            : item.quantity < item.stock_threshold && item.quantity != 0
             ? "low_stock"
             : "out_of_stock",
       };
@@ -118,7 +118,7 @@ export async function fetchPrintJobs(id: string) {
 
   try {
     const { data, error } = await supabase
-      .from("print_jobs")
+      .from("print_job")
       .select("*")
       .eq("order_id", id);
 
@@ -171,7 +171,7 @@ export async function fetchLowStockProducts() {
     }
 
     const lowStock = data.filter((item) => {
-      return item.quantity < item.stock_threshhold && item.quantity !== 0;
+      return item.quantity < item.stock_threshold && item.quantity !== 0;
     });
 
     return lowStock as Product[];

@@ -37,7 +37,7 @@ const ProductSchema = z.object({
   name: z.string(),
   category: z.string(),
   quantity: z.coerce.number(),
-  stock_threshhold: z.number(),
+  stock_threshold: z.number(),
   cost: z.coerce.number(),
   price: z.coerce.number(),
 });
@@ -51,7 +51,7 @@ export function EditProductForm({ product, categories }: EditProductProp) {
       name: formData.get("name"),
       category: formData.get("category"),
       quantity: parseInt(formData.get("quantity") as string),
-      stock_threshhold: parseInt(formData.get("stock_threshhold") as string),
+      stock_threshold: parseInt(formData.get("stock_threshold") as string),
       cost: parseFloat(formData.get("cost") as string),
       price: formData.get("price"),
     });
@@ -141,14 +141,14 @@ export function EditProductForm({ product, categories }: EditProductProp) {
                 />
               </Field>
               <Field className="gap-1">
-                <FieldLabel htmlFor="stock_threshhold">
-                  Stock Threshhold
+                <FieldLabel htmlFor="stock_threshold">
+                  Stock Threshold
                 </FieldLabel>
                 <Input
-                  id="stock_threshhold"
-                  name="stock_threshhold"
+                  id="stock_threshold"
+                  name="stock_threshold"
                   type="number"
-                  defaultValue={product.stock_threshhold}
+                  defaultValue={product.stock_threshold}
                   required
                 />
               </Field>
@@ -194,7 +194,7 @@ export function AddNewProductForm({ categories }: AddNewProductProp) {
       name: formData.get("name"),
       category: formData.get("category"),
       quantity: parseInt(formData.get("quantity") as string),
-      stock_threshhold: parseInt(formData.get("stock_threshhold") as string),
+      stock_threshold: parseInt(formData.get("stock_threshold") as string),
       cost: parseFloat(formData.get("cost") as string),
       price: formData.get("price"),
     });
@@ -280,12 +280,12 @@ export function AddNewProductForm({ categories }: AddNewProductProp) {
                 />
               </Field>
               <Field className="gap-1">
-                <FieldLabel htmlFor="stock_threshhold">
-                  Stock Threshhold
+                <FieldLabel htmlFor="stock_threshold">
+                  Stock Threshold
                 </FieldLabel>
                 <Input
-                  id="stock_threshhold"
-                  name="stock_threshhold"
+                  id="stock_threshold"
+                  name="stock_threshold"
                   type="number"
                   placeholder="e.g. 10"
                   required

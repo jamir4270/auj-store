@@ -17,7 +17,7 @@ export interface Product {
   name: string;
   quantity: number;
   status?: ProductStatus;
-  stock_threshhold: number;
+  stock_threshold: number;
   cost: number;
   price: number;
   category: string;
@@ -29,14 +29,14 @@ export interface Order {
   id?: string;
   total: number;
   status: OrderStatus;
-  partial_payment: number;
+  partial_payment: number | null;
   created_at?: string;
   updated_at?: string;
   total_profit: number;
 }
 
 export interface OrderItem {
-  id?: string | null;
+  id?: string;
   order_id: string;
   product_id: string;
   quantity: number;
@@ -52,8 +52,8 @@ export interface HistoryOrderItem extends OrderItem {
 }
 
 export interface PrintJob {
-  id: string | null;
-  order_id: string | null;
+  id?: string;
+  order_id?: string;
   service_type: PrintServiceType;
   paper_type: PrintPaperType;
   paper_size: PrintPaperSizeType;
@@ -61,7 +61,7 @@ export interface PrintJob {
   page_count: number;
   copies: number;
   subtotal: number;
-  created_at: string | null;
+  created_at?: string;
 }
 
 export interface ProductAtSale extends Product {
