@@ -21,7 +21,7 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export default async function ProtectedLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -29,32 +29,32 @@ export default async function ProtectedLayout({
   const routes: SidebarProp[] = [
     {
       title: "Dashboard",
-      url: "/protected/main/dashboard",
+      url: "/dashboard",
       icon: LayoutDashboard,
     },
     {
       title: "Product Sales",
-      url: "/protected/main/orders",
+      url: "/orders",
       icon: ShoppingBag,
     },
     {
-      title: "Print Job",
-      url: "/protected/main/print-job",
+      title: "Print Jobs",
+      url: "/print-jobs",
       icon: PrinterIcon,
     },
     {
       title: "Inventory",
-      url: "/protected/main/inventory",
+      url: "/inventory",
       icon: Warehouse,
     },
     {
       title: "Analytics",
-      url: "/protected/main/analytics",
+      url: "/analytics",
       icon: ChartSpline,
     },
     {
       title: "Sales History",
-      url: "/protected/main/history",
+      url: "/history",
       icon: History,
     },
   ];

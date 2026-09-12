@@ -9,7 +9,7 @@ export default async function RootPage() {
   const { data } = await supabase.auth.getClaims();
 
   if (data?.claims) {
-    redirect("/protected/main/dashboard");
+    redirect("/dashboard");
   }
 
   return (

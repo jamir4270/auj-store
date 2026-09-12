@@ -40,7 +40,7 @@ export function LoginForm({
       });
       if (error) throw error;
       toast.success("Login successful! Redirecting...");
-      router.push("/protected/main/dashboard");
+      router.push("/dashboard");
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "An error occurred";
