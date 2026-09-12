@@ -12,37 +12,35 @@
 
 ---
 
-## 2. Pending Follow-Up Migration & Code Tasks
+## 2. Follow-Up Migration & Code Tasks (Resolved)
 
-### Item 1: Typo in Column Name (`stock_threshhold` &rarr; `stock_threshold`)
-* **Database Action:** Create a migration to rename column `products.stock_threshhold` to `products.stock_threshold`.
-  ```sql
-  ALTER TABLE public.products RENAME COLUMN stock_threshhold TO stock_threshold;
-  ```
-* **Application Code Touchpoints:**
-  * `lib/models.ts`: Interface `Product.stock_threshold`
-  * `lib/database.types.ts`: Regenerate types
-  * `app/protected/main/inventory/_components/forms.tsx`: Zod validation schema & form field names
-  * `app/protected/main/inventory/_components/product-columns.tsx`: Column accessor and header label
-  * `app/protected/main/inventory/actions.ts`: Form parsing and update queries
+Migration File: `supabase/migrations/20260912020000_follow_up_schema_cleanups.sql`
 
-### Item 2: Align `Order.partial_payment` Nullability
-* **Issue:** In the PostgreSQL schema, `orders.partial_payment` is nullable (`double precision NULL`), but in TypeScript models or forms, check whether `partial_payment` is treated as required `0` or optional `null`.
-* **Action:** Standardize on default `0.0` or explicit `number | null` across `lib/models.ts`, server actions, and UI checkout dialogs.
+* [x] **Item 1: Typo in Column Name (`stock_threshhold` &rarr; `stock_threshold`)**
+  * **Status:** Resolved in migration `20260912020000_follow_up_schema_cleanups.sql` & application code.
+  * **Database Action:**
+    ```sql
+    ALTER TABLE public.products RENAME COLUMN stock_threshhold TO stock_threshold;
+    ```
+  * **Application Code Touchpoints Updated:**
+    * `lib/models.ts`: Interface `Product.stock_threshold`
+    * `lib/database.types.ts`: Updated `products` table Row, Insert, and Update definitions
+    * `lib/data.ts`: Updated `fetchProducts` and `fetchLowStockProducts` references
+    * `app/protected/main/inventory/_components/forms.tsx`: Zod validation schema & form field names
+    * `app/protected/main/inventory/actions.ts`: Form parsing and update queries
 
-### Item 3: Type Consistency for `PrintJob.id` and `order_id`
-* **Issue:** `PrintJob` model currently types `id: string | null` and `order_id: string | null`, whereas `OrderItem` types `order_id: string`.
-* **Action:** Standardize UUID string typing across all entities in `lib/models.ts` and derive from `Database['public']['Tables']['...']['Row']` where possible.
+* [x] **Item 2: Align `Order.partial_payment` Nullability**
+  * **Status:** Resolved in `lib/models.ts` and checkout actions.
+  * **Detail:** Standardized `partial_payment: number | null` on `Order` interface matching database schema nullability while defaulting to `0` in POS order forms.
 
-### Item 4: RLS Policy Target Role Hardening for `print_job`
-* **Issue:** The `print_job` DELETE policy is currently defined `TO PUBLIC` instead of `TO authenticated`.
-* **Action:** Create migration to update policy:
-  ```sql
-  DROP POLICY "Enable delete for authenticated users" ON public.print_job;
-  CREATE POLICY "Enable delete for authenticated users" ON public.print_job
-    FOR DELETE TO authenticated USING (true);
-  ```
+* [x] **Item 3: Type Consistency for `PrintJob.id` and `order_id`**
+  * **Status:** Resolved in `lib/models.ts` and `lib/data.ts`.
+  * **Detail:** Standardized UUID string typing to `id?: string`, `order_id?: string`, `created_at?: string` on `PrintJob` and `OrderItem`. Corrected `fetchPrintJobs` table query from `print_jobs` to `print_job`.
 
-### Item 5: Add RLS Policies for `service_rates`
-* **Issue:** Table `service_rates` has RLS enabled but 0 policies defined, requiring server-side service role client or explicit SELECT policy for authenticated users.
-* **Action:** Add read/write policies appropriate for staff and admin roles.
+* [x] **Item 4: RLS Policy Target Role Hardening for `print_job`**
+  * **Status:** Resolved in migration `20260912020000_follow_up_schema_cleanups.sql`.
+  * **Detail:** Dropped PUBLIC delete policy and applied `TO authenticated`.
+
+* [x] **Item 5: Add RLS Policies for `service_rates`**
+  * **Status:** Resolved in migration `20260912020000_follow_up_schema_cleanups.sql`.
+  * **Detail:** Added SELECT, INSERT, UPDATE, and DELETE policies for authenticated role.

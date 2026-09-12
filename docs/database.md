@@ -50,7 +50,7 @@ erDiagram
         float8 price
         timestamptz created_at
         text category
-        int8 stock_threshhold
+        int8 stock_threshold
         float8 cost
         timestamptz updated_at
     }
@@ -136,7 +136,7 @@ Inventory catalog of merchandise items sold in the store.
 | `price` | `double precision` | YES | `NULL` | Retail selling price |
 | `cost` | `double precision` | YES | `NULL` | Acquisition cost (for profit computation) |
 | `category` | `text` | YES | `NULL` | Category classification |
-| `stock_threshhold` | `bigint` | NO | — | Low-stock alert trigger threshold |
+| `stock_threshold` | `bigint` | NO | — | Low-stock alert trigger threshold |
 | `created_at` | `timestamptz` | NO | `now()` | Timestamp created |
 | `updated_at` | `timestamptz` | YES | `now()` | Timestamp last modified |
 
@@ -215,12 +215,15 @@ All tables have RLS enabled. Current policies:
 | `order_items` | `Enable delete for all authenticated users` | `DELETE` | `authenticated` | `USING (true)` |
 | `print_job` | `Enable read access for all authenticated users` | `SELECT` | `authenticated` | `USING (true)` |
 | `print_job` | `Enable insert for authenticated users only` | `INSERT` | `authenticated` | `WITH CHECK (true)` |
-| `print_job` | `Enable delete for authenticated users` | `DELETE` | `PUBLIC` | `USING (true)` |
+| `print_job` | `Enable delete for authenticated users` | `DELETE` | `authenticated` | `USING (true)` |
 | `products` | `Enable read access for all authenticated users` | `SELECT` | `authenticated` | `USING (true)` |
 | `products` | `Enable insert for admin users only` | `INSERT` | `authenticated` | `WITH CHECK (true)` |
 | `products` | `Allow authenticated user to update table` | `UPDATE` | `authenticated` | `USING (true)` |
 | `products` | `Enable delete for authenticated` | `DELETE` | `authenticated` | `USING (true)` |
-| `service_rates` | *(No policies)* | — | — | Access controlled via server-side service client |
+| `service_rates` | `Enable read access for all authenticated users` | `SELECT` | `authenticated` | `USING (true)` |
+| `service_rates` | `Enable insert for authenticated users only` | `INSERT` | `authenticated` | `WITH CHECK (true)` |
+| `service_rates` | `Enable update for authenticated users only` | `UPDATE` | `authenticated` | `USING (true)` |
+| `service_rates` | `Enable delete for authenticated users only` | `DELETE` | `authenticated` | `USING (true)` |
 
 ---
 

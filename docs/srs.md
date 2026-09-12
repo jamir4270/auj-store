@@ -61,8 +61,8 @@ AUJ Store is built with Next.js (App Router), TypeScript, Tailwind CSS, shadcn/u
 
 ### 3.4 Inventory Management (`/inventory`)
 * **FR-INV-1:** The user shall be able to create, view, edit, and delete products.
-* **FR-INV-2:** Each product shall track `name`, `quantity`, `price`, `cost`, `category`, and `stock_threshhold`.
-* **FR-INV-3:** The system shall flag items whose `quantity <= stock_threshhold` as `low_stock` or `out_of_stock`.
+* **FR-INV-2:** Each product shall track `name`, `quantity`, `price`, `cost`, `category`, and `stock_threshold`.
+* **FR-INV-3:** The system shall flag items whose `quantity <= stock_threshold` as `low_stock` or `out_of_stock`.
 * **FR-INV-4:** The system shall provide distinct categories via the `unique_categories` view.
 
 ### 3.5 Sales History & Order Tracking (`/history`)

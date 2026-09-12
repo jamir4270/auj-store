@@ -89,7 +89,7 @@ sequenceDiagram
 
 ### 4.2 Data Models & TypeScript Contracts
 Core TypeScript interfaces in `lib/models.ts` strictly map to the PostgreSQL schema:
-* `Product`: Maps to `products` table (including `stock_threshhold`, `cost`, `price`).
+* `Product`: Maps to `products` table (including `stock_threshold`, `cost`, `price`).
 * `Order`: Maps to `orders` table (fields: `id`, `total`, `status`, `partial_payment`, `total_profit`).
 * `OrderItem`: Maps to `order_items` table.
 * `PrintJob`: Maps to singular table `print_job` (fields: `service_type`, `paper_type`, `paper_size`, `color_mode`, `page_count`, `copies`, `subtotal`).
