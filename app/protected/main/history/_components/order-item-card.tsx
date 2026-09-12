@@ -5,8 +5,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { HistoryOrderItem } from "@/lib/models";
-import { formatDate, twoDecimal } from "@/lib/utils";
+import { HistoryOrderItem } from "@/types/domain";
+import { formatPHP } from "@/lib/utils/currency";
+import { formatDate } from "@/lib/utils";
 
 type OrderItemProp = {
   orderItem: HistoryOrderItem;
@@ -14,32 +15,29 @@ type OrderItemProp = {
 
 export function OrderItemCard({ orderItem }: OrderItemProp) {
   return (
-    <Card>
-      <CardHeader className="flex flex-row">
-        <CardTitle className="text-2xl p-0">{orderItem.name}</CardTitle>
+    <Card className="hover:shadow-xs transition-shadow">
+      <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between">
+        <CardTitle className="text-lg font-semibold">{orderItem.name}</CardTitle>
+        <span className="text-xs px-2.5 py-0.5 rounded-full bg-muted font-medium">
+          {orderItem.category}
+        </span>
       </CardHeader>
-      <CardContent className="flex flex-row justify-between">
-        <div>
-          <div className="flex flex-row gap-2">
-            <p>Category: </p>
-            <p>{orderItem.category}</p>
-          </div>
-          <div className="flex flex-row gap-2">
-            <p>Price: </p>
-            <p>{twoDecimal(orderItem.unit_price_at_sale)}</p>
-          </div>
-          <div className="flex flex-row gap-2">
-            <p>Quantity: </p>
-            <p>{orderItem.quantity}</p>
-          </div>
+      <CardContent className="p-4 pt-1 flex flex-row justify-between items-center">
+        <div className="space-y-1 text-sm text-muted-foreground">
+          <p>
+            Unit Price: <span className="font-medium text-foreground">{formatPHP(orderItem.unit_price_at_sale)}</span>
+          </p>
+          <p>
+            Quantity: <span className="font-medium text-foreground">{orderItem.quantity}</span>
+          </p>
         </div>
-        <div className="flex flex-col">
-          <div className="text-center">Total</div>
-          <div className="text-3xl">{twoDecimal(orderItem.subtotal)}</div>
+        <div className="text-right">
+          <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Subtotal</div>
+          <div className="text-2xl font-bold text-foreground">{formatPHP(orderItem.subtotal)}</div>
         </div>
       </CardContent>
-      <CardFooter>
-        {formatDate(new Date(orderItem.created_at ?? ""))}
+      <CardFooter className="p-4 pt-0 text-xs text-muted-foreground border-t mt-2 pt-2">
+        {orderItem.created_at ? formatDate(new Date(orderItem.created_at)) : "—"}
       </CardFooter>
     </Card>
   );

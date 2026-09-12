@@ -1,4 +1,4 @@
-"use react";
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -7,32 +7,41 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { HistoryOrderItem } from "@/lib/models";
-import { ChevronDown } from "lucide-react";
+import { HistoryOrderItem } from "@/types/domain";
+import { ChevronDown, CalendarIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { fetchOrderItems } from "../data";
+import { fetchOrderItemsWithDetails } from "@/lib/data";
 
 type DatePickerProps = {
   handleOrderItemListChange: (newList: HistoryOrderItem[]) => void;
+  onLoadingChange?: (isLoading: boolean) => void;
 };
 
-export function DatePicker({ handleOrderItemListChange }: DatePickerProps) {
+export function DatePicker({ handleOrderItemListChange, onLoadingChange }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(new Date());
 
   useEffect(() => {
     if (!date) return;
-    const newDate = new Date(date);
-    newDate?.setHours(0, 0, 0, 0);
-    const nextDate = new Date(newDate);
-    nextDate.setDate(newDate.getDate() + 1);
+    const startDate = new Date(date);
+    startDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 1);
 
     const updateList = async () => {
-      const newList = await fetchOrderItems(
-        newDate.toISOString(),
-        nextDate.toISOString()
-      );
-      handleOrderItemListChange(newList);
+      onLoadingChange?.(true);
+      try {
+        const list = await fetchOrderItemsWithDetails(
+          startDate.toISOString(),
+          endDate.toISOString()
+        );
+        handleOrderItemListChange(list);
+      } catch (err) {
+        console.error("Failed to load history items for date:", err);
+      } finally {
+        onLoadingChange?.(false);
+      }
     };
 
     updateList();
@@ -44,20 +53,27 @@ export function DatePicker({ handleOrderItemListChange }: DatePickerProps) {
         <Button
           variant="outline"
           id="date"
-          className="w-48 justify-between font-normal"
+          className="w-52 justify-between font-normal"
         >
-          {date ? date.toLocaleDateString() : "Select date"}
-          <ChevronDown />
+          <div className="flex items-center gap-2">
+            <CalendarIcon className="h-4 w-4 opacity-50" />
+            <span>
+              {date ? date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Select date"}
+            </span>
+          </div>
+          <ChevronDown className="h-4 w-4 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+      <PopoverContent className="w-auto overflow-hidden p-0" align="end">
         <Calendar
           mode="single"
           selected={date}
           captionLayout="dropdown"
           onSelect={(newDate) => {
-            setDate(newDate);
-            setOpen(false);
+            if (newDate) {
+              setDate(newDate);
+              setOpen(false);
+            }
           }}
         />
       </PopoverContent>

@@ -1,128 +1,111 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Product } from "@/lib/models";
-import { twoDecimal } from "@/lib/utils";
+import { Product } from "@/types/domain";
+import { formatPHP } from "@/lib/utils/currency";
+import { getStockStatusMetadata } from "@/lib/utils/stock-status";
 import { EditProduct, AddStock, DeleteProduct } from "./raw-actions";
 import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-function setStatusClor(status: string) {
-  if (status === "In Stock") {
-    return "text-green-400";
-  } else if (status === "Low Stock") {
-    return "text-orange-400";
-  } else {
-    return "text-red-500";
-  }
-}
+import { cn } from "@/lib/utils";
 
 export const getColumns = (categories: string[]): ColumnDef<Product>[] => [
   {
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="font-semibold text-xs uppercase"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Name
+        <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <span className="font-medium text-foreground">{row.getValue("name")}</span>
+    ),
   },
   {
     accessorKey: "category",
-    header: "Category",
+    header: () => <span className="font-semibold text-xs uppercase text-muted-foreground">Category</span>,
+    cell: ({ row }) => (
+      <span className="text-xs px-2 py-0.5 rounded-full bg-muted font-medium">
+        {row.getValue("category")}
+      </span>
+    ),
   },
   {
     accessorKey: "quantity",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="p-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Stock
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="font-semibold text-xs uppercase"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Stock
+        <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
+      </Button>
+    ),
     cell: ({ row }) => {
       const product = row.original;
-
-      return <div className="text-center">{product.quantity}</div>;
+      return <span className="font-mono font-medium">{product.quantity}</span>;
     },
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: () => <span className="font-semibold text-xs uppercase text-muted-foreground">Status</span>,
     cell: ({ row }) => {
-      const status = () => {
-        const value = row.getValue("status");
-        if (value === "in_stock") {
-          return "In Stock" as string;
-        } else if (value === "low_stock") {
-          return "Low Stock" as string;
-        } else if (value === "out_of_stock") {
-          return "Out of Stock" as string;
-        } else {
-          return "N/A" as string;
-        }
-      };
+      const status = row.original.status || "in_stock";
+      const meta = getStockStatusMetadata(status);
 
-      const statusText = status();
-      return <div className={setStatusClor(statusText)}>{statusText}</div>;
+      return (
+        <span className={cn("px-2.5 py-0.5 rounded-full border text-[11px] font-semibold", meta.className)}>
+          {meta.label}
+        </span>
+      );
     },
   },
   {
     accessorKey: "cost",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="p-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Cost
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const value = twoDecimal(row.getValue("cost"));
-      return <div className="text-center">{value}</div>;
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="font-semibold text-xs uppercase"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Unit Cost
+        <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <span className="font-mono text-muted-foreground">{formatPHP(row.getValue("cost"))}</span>
+    ),
   },
   {
     accessorKey: "price",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="p-0"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Price
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const value = twoDecimal(row.getValue("price"));
-      return <div className="text-center">{value}</div>;
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="font-semibold text-xs uppercase"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Selling Price
+        <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <span className="font-mono font-semibold text-foreground">{formatPHP(row.getValue("price"))}</span>
+    ),
   },
   {
     id: "actions",
-    header: "Actions",
+    header: () => <span className="font-semibold text-xs uppercase text-muted-foreground">Actions</span>,
     cell: ({ row }) => {
       const data = row.original;
 
       return (
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row items-center gap-1.5">
           <AddStock product={data} />
           <EditProduct product={data} categories={categories} />
           <DeleteProduct product={data} />

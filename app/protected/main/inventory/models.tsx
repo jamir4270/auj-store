@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { getColumns } from "./_components/product-columns";
 import { ProductsTable } from "./_components/products-table";
-import { Product } from "@/lib/models";
+import { Product } from "@/types/domain";
 
 interface ProductsTableProps {
   products: Product[];

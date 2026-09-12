@@ -1,8 +1,17 @@
 import { LoginForm } from "@/components/login-form";
 import { ShieldCheck } from "lucide-react";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
-export default function LoginPage() {
+export default async function RootPage() {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+
+  if (data?.claims) {
+    redirect("/protected/main/dashboard");
+  }
+
   return (
     <div>
       <div className="grid min-h-svh lg:grid-cols-2">
@@ -66,7 +75,7 @@ export default function LoginPage() {
             <div className="w-full max-w-xs space-y-6">
               <div className="lg:hidden flex flex-col items-center text-center gap-2 mb-8">
                 <div className="h-12 w-12 bg-blue-50 text-[#0A58A3] rounded-xl flex items-center justify-center mb-2">
-                  <p>AUJ</p>
+                  <p className="font-bold">AUJ</p>
                 </div>
                 <h1 className="text-xl font-bold">AUJ Store</h1>
                 <p className="text-sm text-muted-foreground">
