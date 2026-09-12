@@ -1,109 +1,98 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# AUJ Store Management & POS System
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+An integrated retail Point-of-Sale (POS), inventory management, customized printing service calculator, and business analytics platform built with **Next.js 15 (App Router)** and **Supabase (PostgreSQL 17, Auth, SSR)**.
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+---
 
-## Features
+## 🌟 Core Features
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Proxy
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+* **Point of Sale (POS):** Fast product search, real-time cart subtotaling, custom print job attachments, order completion, and partial payment tracking.
+* **Printing & Photocopying Service Calculator:** Configurable print jobs with paper types (copier, photo), sizes (short, A4, long, 2R–5R), color modes (B&W, color), page counts, and copies.
+* **Inventory Management:** Full product cataloging, stock adjustment, cost/price margin tracking, categorizations, and low-stock threshold alerts.
+* **Transaction History & Receipts:** Order tracking, searchable receipt inspection, line-item details, and customer debt management.
+* **Financial Analytics & Dashboard:** Real-time revenue, gross profit, sales trends, category distribution charts, and low-stock notifications.
+* **Security & Auth:** Cookie-based authentication via `@supabase/ssr` with PostgreSQL Row-Level Security (RLS) enforcement.
 
-## Demo
+---
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+## 🛠️ Technology Stack
 
-## Deploy to Vercel
+* **Framework:** [Next.js 15](https://nextjs.org/) (App Router, Server Actions, React 19)
+* **Styling & UI:** [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), [Radix UI](https://www.radix-ui.com/), [Lucide React](https://lucide.dev/)
+* **Database & Backend:** [Supabase](https://supabase.com/) (PostgreSQL 17, Row Level Security, Supabase Auth)
+* **Type Safety:** TypeScript, Generated Database Schema Types (`lib/database.types.ts`), [Zod](https://zod.dev/)
+* **Charts & Data Tables:** [Recharts](https://recharts.org/), [TanStack Table v8](https://tanstack.com/table)
 
-Vercel deployment will guide you through creating a Supabase account and project.
+---
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+## 🚀 Getting Started
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+### 1. Prerequisites
+* Node.js 18+ and npm
+* Supabase project or Docker Desktop (for local database emulation)
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
+### 2. Environment Configuration
+Create a `.env.local` file in the root directory:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-publishable-key>
+```
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
+### 3. Install Dependencies & Run Locally
+```bash
+npm install
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Clone and run locally
+---
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+## 🗄️ Code-First Database & Migrations Workflow
 
-2. Create a Next.js app using the Supabase Starter template npx command
+AUJ Store operates under a **code-first migration workflow**. Database schemas are version-controlled in `supabase/migrations/` rather than modified manually via the dashboard.
 
+### Supabase CLI Commands
+
+| NPM Script | Command | Purpose |
+|:---|:---|:---|
+| `npm run supabase:start` | `supabase start` | Spins up local Supabase stack in Docker |
+| `npm run supabase:stop` | `supabase stop` | Stops local Supabase Docker containers |
+| `npm run supabase:diff` | `supabase db diff` | Compares local migrations against database |
+| `npm run supabase:migration:new <name>` | `supabase migration new <name>` | Generates a new timestamped migration file |
+| `npm run supabase:push` | `supabase db push` | Applies pending local migrations to remote DB |
+| `npm run supabase:types` | `supabase gen types ...` | Regenerates `lib/database.types.ts` from schema |
+
+---
+
+### Standard Workflow for Schema Changes
+
+1. **Create a new migration file:**
    ```bash
-   npx create-next-app --example with-supabase with-supabase-app
+   npm run supabase:migration:new add_new_feature_table
    ```
-
+2. **Write SQL statements:** Add `CREATE TABLE`, `ALTER TABLE`, or `CREATE POLICY` statements in the newly created file under `supabase/migrations/`.
+3. **Test against local or shadow database:**
    ```bash
-   yarn create next-app --example with-supabase with-supabase-app
+   npx supabase db diff --db-url "$SUPABASE_DB_URL"
    ```
-
+4. **Push migrations to production:**
    ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
+   npx supabase db push --db-url "$SUPABASE_DB_URL"
    ```
-
-3. Use `cd` to change into the app's directory
-
+5. **Regenerate TypeScript database types:**
    ```bash
-   cd with-supabase-app
+   npm run supabase:types
    ```
+6. **Commit the migration file and `lib/database.types.ts`** together in your git pull request.
 
-4. Rename `.env.example` to `.env.local` and update the following:
+---
 
-  ```env
-  NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=[INSERT SUPABASE PROJECT API PUBLISHABLE OR ANON KEY]
-  ```
-  > [!NOTE]
-  > This example uses `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, which refers to Supabase's new **publishable** key format.
-  > Both legacy **anon** keys and new **publishable** keys can be used with this variable name during the transition period. Supabase's dashboard may show `NEXT_PUBLIC_SUPABASE_ANON_KEY`; its value can be used in this example.
-  > See the [full announcement](https://github.com/orgs/supabase/discussions/29260) for more information.
+## 📚 Project Documentation
 
-  Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
+Detailed design, architecture, and specifications are located in the [`docs/`](file:///c:/projects/webdevshiz/auj-store/docs) directory:
 
-5. You can now run the Next.js local development server:
-
-   ```bash
-   npm run dev
-   ```
-
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
-
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
-
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
-
-## Feedback and issues
-
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
-
-## More Supabase examples
-
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+* 📄 [**Software Requirements Specification (SRS)**](file:///c:/projects/webdevshiz/auj-store/docs/srs.md)
+* 📄 [**Database Architecture & ERD**](file:///c:/projects/webdevshiz/auj-store/docs/database.md)
+* 📄 [**System & UI/UX Design Specification**](file:///c:/projects/webdevshiz/auj-store/docs/design-spec.md)
+* 📄 [**Baseline Schema Comparison & Diff Notes**](file:///c:/projects/webdevshiz/auj-store/docs/other/schema-diff.md)
+* 📄 [**Phase 8 Schema & Code Follow-Up Tasks**](file:///c:/projects/webdevshiz/auj-store/docs/other/follow-up-schema-cleanups.md)

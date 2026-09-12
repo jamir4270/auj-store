@@ -1,17 +1,8 @@
-import { LoginForm } from "@/components/auth/login-form";
+import { SignUpForm } from "@/components/auth/sign-up-form";
 import { ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 
-export default async function RootPage() {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getClaims();
-
-  if (data?.claims) {
-    redirect("/dashboard");
-  }
-
+export default function Page() {
   return (
     <div>
       <div className="grid min-h-svh lg:grid-cols-2">
@@ -75,7 +66,7 @@ export default async function RootPage() {
             <div className="w-full max-w-xs space-y-6">
               <div className="lg:hidden flex flex-col items-center text-center gap-2 mb-8">
                 <div className="h-12 w-12 bg-blue-50 text-[#0A58A3] rounded-xl flex items-center justify-center mb-2">
-                  <p className="font-bold">AUJ</p>
+                  <p>AUJ</p>
                 </div>
                 <h1 className="text-xl font-bold">AUJ Store</h1>
                 <p className="text-sm text-muted-foreground">
@@ -83,7 +74,7 @@ export default async function RootPage() {
                 </p>
               </div>
 
-              <LoginForm />
+              <SignUpForm />
             </div>
           </div>
         </div>

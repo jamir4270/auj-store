@@ -1,19 +1,12 @@
-import { LoginForm } from "@/components/auth/login-form";
+import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
 import { ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import { Toaster } from "sonner";
 
-export default async function RootPage() {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getClaims();
-
-  if (data?.claims) {
-    redirect("/dashboard");
-  }
-
+export default function ForgotPasswordPage() {
   return (
     <div>
+      <Toaster position="top-right" />
       <div className="grid min-h-svh lg:grid-cols-2">
         <div className="relative hidden lg:flex flex-col p-10 text-white dark:border-r bg-[#0A58A3] overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/40" />
@@ -77,13 +70,13 @@ export default async function RootPage() {
                 <div className="h-12 w-12 bg-blue-50 text-[#0A58A3] rounded-xl flex items-center justify-center mb-2">
                   <p className="font-bold">AUJ</p>
                 </div>
-                <h1 className="text-xl font-bold">AUJ Store</h1>
+                <h1 className="text-xl font-bold">Account Recovery</h1>
                 <p className="text-sm text-muted-foreground">
-                  Sign in to manage inventory
+                  Restore access to your inventory dashboard
                 </p>
               </div>
 
-              <LoginForm />
+              <ForgotPasswordForm />
             </div>
           </div>
         </div>
