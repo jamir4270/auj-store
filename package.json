@@ -4,7 +4,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:diff": "supabase db diff",
+    "supabase:migration:new": "supabase migration new",
+    "supabase:push": "supabase db push",
+    "supabase:types": "supabase gen types typescript --linked > lib/database.types.ts"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
@@ -50,6 +56,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
+    "supabase": "^2.117.0",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5"
   }
