@@ -2,6 +2,11 @@ import { z } from "zod";
 
 export const ProductSchema = z.object({
   id: z.string().uuid().optional(),
+  barcode: z
+    .string()
+    .trim()
+    .nullish()
+    .transform((val) => (val && val.length > 0 ? val : null)),
   name: z.string().min(1, "Product name is required"),
   category: z.string().min(1, "Category is required"),
   quantity: z.coerce
