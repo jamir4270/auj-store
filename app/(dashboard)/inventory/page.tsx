@@ -6,11 +6,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { AddNewProduct } from "./_components/add-product";
-import { fetchProducts } from "@/lib/data";
+import { fetchProducts, fetchCategories } from "@/lib/data";
 import { Product } from "@/types/domain";
 import { formatPHP } from "@/lib/utils/currency";
 import { ProductsTableWrapper } from "./models";
-import { fetchCategories } from "./data";
 import { Warehouse, PackageCheck, AlertTriangle, XCircle } from "lucide-react";
 
 export default async function Inventory() {

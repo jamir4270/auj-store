@@ -28,6 +28,30 @@ export async function fetchProducts(): Promise<Product[]> {
   }
 }
 
+export async function fetchCategories(): Promise<string[]> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select("category")
+      .not("category", "is", null);
+
+    if (error) {
+      throw error;
+    }
+
+    const categoryNames = (data || [])
+      .map((item) => item.category)
+      .filter((cat): cat is string => Boolean(cat));
+
+    const uniqueCategories = [...new Set(categoryNames)];
+    return uniqueCategories;
+  } catch (error) {
+    console.error("Failed to fetch categories:", error instanceof Error ? error.message : error);
+    return [];
+  }
+}
+
 export async function fetchOrders(): Promise<Order[]> {
   try {
     const supabase = await createClient();
