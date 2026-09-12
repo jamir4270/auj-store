@@ -2,35 +2,11 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-
-import { AccumulatedProfitChart } from "./accumulated-profit-chart";
-import { NetProfitChart } from "./net-profit-chart";
-
-import { DailySalesChart } from "./daily-sales-chart";
-import { AccumulatedSalesChart } from "./accumulated-sales-chart";
-
-type MetricMode = "profit" | "sales";
-type ViewMode = "daily" | "accumulated";
+import { MetricTrendChart, MetricType, ViewMode } from "@/components/dashboard/metric-trend-chart";
 
 export function Charts() {
-  const [metric, setMetric] = useState<MetricMode>("profit");
+  const [metric, setMetric] = useState<MetricType>("profit");
   const [viewMode, setViewMode] = useState<ViewMode>("daily");
-
-  const renderChart = () => {
-    if (metric === "profit") {
-      return viewMode === "daily" ? (
-        <NetProfitChart />
-      ) : (
-        <AccumulatedProfitChart />
-      );
-    } else {
-      return viewMode === "daily" ? (
-        <DailySalesChart />
-      ) : (
-        <AccumulatedSalesChart />
-      );
-    }
-  };
 
   const getDescription = () => {
     const metricText = metric === "profit" ? "net profit" : "gross sales";
@@ -106,7 +82,7 @@ export function Charts() {
           key={`${metric}-${viewMode}`}
           className="animate-in fade-in zoom-in-95 duration-300"
         >
-          {renderChart()}
+          <MetricTrendChart metric={metric} viewMode={viewMode} />
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { twoDecimal } from "@/lib/utils";
+import { formatPHP } from "@/lib/utils/currency";
 import { TrendingUp, Package, PhilippinePeso } from "lucide-react";
 
 type SummaryCardProps = {
@@ -15,40 +15,40 @@ export function SummaryCards({
 }: SummaryCardProps) {
   return (
     <div className="grid gap-4 md:grid-cols-3 w-full">
-      <Card>
+      <Card className="hover:shadow-xs transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Gross Sales</CardTitle>
-          <PhilippinePeso className="h-4 w-4 text-muted-foreground" />
+          <CardTitle className="text-sm font-medium text-muted-foreground">Today&apos;s Gross Sales</CardTitle>
+          <PhilippinePeso className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{twoDecimal(grossSale)}</div>
-          <p className="text-xs text-muted-foreground">
-            Total revenue generated
+          <div className="text-2xl font-bold text-foreground">{formatPHP(grossSale)}</div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Total revenue generated today
           </p>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="hover:shadow-xs transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Net Profit</CardTitle>
-          <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          <CardTitle className="text-sm font-medium text-muted-foreground">Today&apos;s Net Profit</CardTitle>
+          <TrendingUp className="h-4 w-4 text-primary" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{twoDecimal(netProfit)}</div>
-          <p className="text-xs text-muted-foreground">
-            Total earnings after costs
+          <div className="text-2xl font-bold text-foreground">{formatPHP(netProfit)}</div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Total earnings after item costs
           </p>
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="hover:shadow-xs transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Products Sold</CardTitle>
-          <Package className="h-4 w-4 text-muted-foreground" />
+          <CardTitle className="text-sm font-medium text-muted-foreground">Products Sold</CardTitle>
+          <Package className="h-4 w-4 text-amber-600 dark:text-amber-400" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{totalProducts}</div>
-          <p className="text-xs text-muted-foreground">Total items ordered</p>
+          <div className="text-2xl font-bold text-foreground">{totalProducts}</div>
+          <p className="text-xs text-muted-foreground mt-1">Total units moved today</p>
         </CardContent>
       </Card>
     </div>
