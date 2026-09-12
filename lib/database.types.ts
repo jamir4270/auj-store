@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -168,7 +168,7 @@ export type Database = {
           name: string | null
           price: number | null
           quantity: number
-          stock_threshhold: number
+          stock_threshold: number
           updated_at: string | null
         }
         Insert: {
@@ -179,7 +179,7 @@ export type Database = {
           name?: string | null
           price?: number | null
           quantity: number
-          stock_threshhold: number
+          stock_threshold: number
           updated_at?: string | null
         }
         Update: {
@@ -190,7 +190,7 @@ export type Database = {
           name?: string | null
           price?: number | null
           quantity?: number
-          stock_threshhold?: number
+          stock_threshold?: number
           updated_at?: string | null
         }
         Relationships: []
