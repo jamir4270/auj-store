@@ -27,6 +27,21 @@ export const getColumns = (categories: string[]): ColumnDef<Product>[] => [
     ),
   },
   {
+    accessorKey: "barcode",
+    header: () => <span className="font-semibold text-xs uppercase text-muted-foreground">Barcode</span>,
+    cell: ({ row }) => {
+      const barcode = row.original.barcode;
+      if (!barcode) {
+        return <span className="text-xs text-muted-foreground/60 italic">Unbarcoded</span>;
+      }
+      return (
+        <span className="font-mono text-xs px-2 py-0.5 rounded bg-muted border font-semibold tracking-wide text-foreground/90">
+          {barcode}
+        </span>
+      );
+    },
+  },
+  {
     accessorKey: "category",
     header: () => <span className="font-semibold text-xs uppercase text-muted-foreground">Category</span>,
     cell: ({ row }) => (

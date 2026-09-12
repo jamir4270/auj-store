@@ -33,29 +33,29 @@ export function ProductsTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState<string>("");
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
     getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting,
-      columnFilters,
+      globalFilter,
     },
   });
 
   return (
     <>
-      <div className="flex items-center py-4 justify-between">
+      <div className="flex items-center py-4 justify-between gap-4">
         <div className="text-2xl font-bold">All Products</div>
         <DebouncedInput
-          placeholder="Filter product..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(value) => table.getColumn("name")?.setFilterValue(value)}
+          placeholder="Filter by name, category, or barcode..."
+          value={globalFilter ?? ""}
+          onChange={(value) => setGlobalFilter(String(value))}
           className="max-w-sm border-foreground"
         />
       </div>

@@ -7,39 +7,71 @@ import {
   CardTitle,
   CardContent,
 } from "@/components/ui/card";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Order, ProductAtSale } from "@/types/domain";
 import { formatPHP } from "@/lib/utils/currency";
 import { getStockStatusMetadata } from "@/lib/utils/stock-status";
 import { useDebounce } from "@/hooks/use-debounce";
-import { Minus, Plus, Trash2, ShoppingBag, Loader2, CheckCircle2 } from "lucide-react";
+import {
+  Minus,
+  Plus,
+  Trash2,
+  ShoppingBag,
+  Loader2,
+  CheckCircle2,
+  Camera,
+  ScanLine,
+  PlusCircle,
+  MinusCircle,
+} from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { submitNewOrder } from "@/lib/actions/orders.actions";
 import { cn } from "@/lib/utils";
+import { useBarcodeScanner, playScanSound } from "@/hooks/use-barcode-scanner";
+import { CameraScannerModal } from "@/components/ui/camera-scanner-modal";
+import { QuickRegisterModal } from "@/components/inventory/quick-register-modal";
+import { lookupBarcodeDetails, BarcodeLookupResult } from "@/lib/services/barcode-lookup.service";
 
 type OrderProps = {
   products: ProductAtSale[];
 };
 
-export function OrderInterface({ products }: OrderProps) {
+export function OrderInterface({ products: initialProducts }: OrderProps) {
+  const [productList, setProductList] = useState<ProductAtSale[]>(initialProducts);
   const [isOrdering, setIsOrdering] = useState(false);
   const [orderList, setOrderList] = useState<ProductAtSale[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearch = useDebounce(searchInput, 200);
 
+  // Barcode & Scanner States
+  const [scanMode, setScanMode] = useState<"add" | "deduct">("add");
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [isQuickRegisterOpen, setIsQuickRegisterOpen] = useState(false);
+  const [activeScannedBarcode, setActiveScannedBarcode] = useState("");
+  const [activeLookupResult, setActiveLookupResult] = useState<BarcodeLookupResult | null>(null);
+
+  // Extract unique categories for quick register modal
+  const existingCategories = useMemo(() => {
+    const cats = productList
+      .map((p) => p.category)
+      .filter((c): c is string => Boolean(c));
+    return [...new Set(cats)];
+  }, [productList]);
+
   const filteredProducts = useMemo(() => {
     const query = debouncedSearch.trim().toLowerCase();
-    if (!query) return products;
-    return products.filter((product) => {
+    if (!query) return productList;
+    return productList.filter((product) => {
       const nameMatch = (product.name || "").toLowerCase().includes(query);
       const catMatch = (product.category || "").toLowerCase().includes(query);
-      return nameMatch || catMatch;
+      const barcodeMatch = (product.barcode || "").toLowerCase().includes(query);
+      return nameMatch || catMatch || barcodeMatch;
     });
-  }, [products, debouncedSearch]);
+  }, [productList, debouncedSearch]);
 
   const orderSummary = useMemo(() => {
     return orderList.reduce(
@@ -60,6 +92,145 @@ export function OrderInterface({ products }: OrderProps) {
 
   const handleOrderListUpdate = (newList: ProductAtSale[]) => {
     setOrderList(newList);
+  };
+
+  // Add or increment a product in cart
+  const handleAddToCart = useCallback((prod: ProductAtSale) => {
+    const availableStock = prod.quantity || 0;
+    if (availableStock <= 0) {
+      playScanSound("warning");
+      toast.warning(`"${prod.name}" is currently out of stock!`);
+      return;
+    }
+
+    setIsOrdering(true);
+    setOrderList((prev) => {
+      const existing = prev.find((item) => item.id === prod.id);
+      if (existing) {
+        const currentQty = existing.amount ?? 1;
+        if (currentQty >= availableStock) {
+          playScanSound("warning");
+          toast.warning(`Maximum stock reached for "${prod.name}" (${availableStock} in inventory).`);
+          return prev;
+        }
+        const updatedQty = currentQty + 1;
+        const price = existing.price ?? 0;
+        const cost = existing.cost ?? 0;
+        toast.info(`Increased "${prod.name}" quantity to ${updatedQty}`);
+        return prev.map((item) =>
+          item.id === prod.id
+            ? {
+                ...item,
+                amount: updatedQty,
+                subtotal: price * updatedQty,
+                profit: (price - cost) * updatedQty,
+              }
+            : item
+        );
+      } else {
+        const price = prod.price ?? 0;
+        const cost = prod.cost ?? 0;
+        toast.success(`Added "${prod.name}" to cart`);
+        return [
+          ...prev,
+          {
+            ...prod,
+            amount: 1,
+            subtotal: price,
+            profit: price - cost,
+          },
+        ];
+      }
+    });
+  }, []);
+
+  // Deduct or remove product from cart
+  const handleDeductFromCart = useCallback((prod: ProductAtSale) => {
+    setOrderList((prev) => {
+      const existing = prev.find((item) => item.id === prod.id);
+      if (!existing) {
+        playScanSound("warning");
+        toast.info(`"${prod.name}" is not in the active cart.`);
+        return prev;
+      }
+
+      const currentQty = existing.amount ?? 1;
+      if (currentQty <= 1) {
+        toast.info(`Removed "${prod.name}" from cart`);
+        return prev.filter((item) => item.id !== prod.id);
+      } else {
+        const updatedQty = currentQty - 1;
+        const price = existing.price ?? 0;
+        const cost = existing.cost ?? 0;
+        toast.info(`Decreased "${prod.name}" quantity to ${updatedQty}`);
+        return prev.map((item) =>
+          item.id === prod.id
+            ? {
+                ...item,
+                amount: updatedQty,
+                subtotal: price * updatedQty,
+                profit: (price - cost) * updatedQty,
+              }
+            : item
+        );
+      }
+    });
+  }, []);
+
+  // Contextual Barcode Handler (POS checkout)
+  const handleBarcodeScan = useCallback(
+    async (scannedCode: string) => {
+      const cleanCode = scannedCode.trim();
+      if (!cleanCode) return;
+
+      // 1. Tier 1: Local Product Match
+      const localMatch = productList.find(
+        (p) => p.barcode && p.barcode.trim() === cleanCode
+      );
+
+      if (localMatch) {
+        if (scanMode === "add") {
+          handleAddToCart(localMatch);
+        } else {
+          handleDeductFromCart(localMatch);
+        }
+        return;
+      }
+
+      // 2. Tier 2 & 3: Unknown Barcode -> Trigger 3rd-Party Lookup
+      playScanSound("warning");
+      const lookupToast = toast.loading(`Looking up new barcode "${cleanCode}"...`);
+
+      try {
+        const lookupResult = await lookupBarcodeDetails(cleanCode);
+        toast.dismiss(lookupToast);
+
+        setActiveScannedBarcode(cleanCode);
+        setActiveLookupResult(lookupResult);
+        setIsQuickRegisterOpen(true);
+      } catch {
+        toast.dismiss(lookupToast);
+        setActiveScannedBarcode(cleanCode);
+        setActiveLookupResult(null);
+        setIsQuickRegisterOpen(true);
+      }
+    },
+    [productList, scanMode, handleAddToCart, handleDeductFromCart]
+  );
+
+  // Hardware Scanner Hook listener
+  useBarcodeScanner({
+    onScan: handleBarcodeScan,
+    enabled: !isQuickRegisterOpen && !isCameraOpen,
+    ignoreInInputs: true,
+  });
+
+  // Callback when a newly scanned unknown product is saved
+  const handleQuickProductRegistered = (newProduct: ProductAtSale) => {
+    // Add to local product catalog
+    setProductList((prev) => [newProduct, ...prev]);
+    // Automatically add to active cart
+    handleAddToCart(newProduct);
   };
 
   const handleCheckout = async () => {
@@ -89,6 +260,19 @@ export function OrderInterface({ products }: OrderProps) {
         description: `Total: ${formatPHP(orderSummary.total)}`,
       });
 
+      // Update local product inventory quantities
+      setProductList((prev) =>
+        prev.map((p) => {
+          const soldItem = orderList.find((item) => item.id === p.id);
+          if (soldItem) {
+            const soldQty = soldItem.amount ?? 1;
+            const newQty = Math.max(0, (p.quantity || 0) - soldQty);
+            return { ...p, quantity: newQty };
+          }
+          return p;
+        })
+      );
+
       // Clear cart
       setOrderList([]);
       setIsOrdering(false);
@@ -104,30 +288,82 @@ export function OrderInterface({ products }: OrderProps) {
     <div className="flex flex-col lg:flex-row h-full gap-4">
       {/* Product Catalog Column */}
       <div className="flex flex-col flex-1 gap-4">
-        <div className="flex flex-row justify-between items-center">
+        {/* Header with Scan controls */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Point of Sale</h1>
-            <p className="text-sm text-muted-foreground">Select products to record an order</p>
+            <p className="text-sm text-muted-foreground">Scan or select products for customer checkout</p>
           </div>
-          <Button
-            onClick={() => setIsOrdering(true)}
-            disabled={isOrdering || orderList.length === 0}
-            className="gap-2"
-          >
-            <ShoppingBag className="h-4 w-4" />
-            Active Cart ({orderList.length})
-          </Button>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Scan Action Mode Toggle (Add vs Deduct) */}
+            <div className="flex items-center rounded-lg border bg-muted/50 p-0.5 text-xs">
+              <button
+                type="button"
+                onClick={() => setScanMode("add")}
+                className={cn(
+                  "flex items-center gap-1 px-2.5 py-1 rounded-md font-medium transition-all",
+                  scanMode === "add"
+                    ? "bg-emerald-600 text-white shadow-xs font-semibold"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+                title="Barcode scans will add item to cart"
+              >
+                <PlusCircle className="h-3.5 w-3.5" />
+                <span>Add Mode</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setScanMode("deduct")}
+                className={cn(
+                  "flex items-center gap-1 px-2.5 py-1 rounded-md font-medium transition-all",
+                  scanMode === "deduct"
+                    ? "bg-rose-600 text-white shadow-xs font-semibold"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+                title="Barcode scans will deduct item from cart"
+              >
+                <MinusCircle className="h-3.5 w-3.5" />
+                <span>Deduct Mode</span>
+              </button>
+            </div>
+
+            {/* Camera Scanner Trigger */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsCameraOpen(true)}
+              className="gap-1.5 text-xs"
+            >
+              <Camera className="h-4 w-4 text-primary" />
+              <span>Camera Scan</span>
+            </Button>
+
+            {/* Cart drawer/toggle */}
+            <Button
+              onClick={() => setIsOrdering(true)}
+              disabled={isOrdering || orderList.length === 0}
+              className="gap-2 text-xs"
+              size="sm"
+            >
+              <ShoppingBag className="h-4 w-4" />
+              Active Cart ({orderList.length})
+            </Button>
+          </div>
         </div>
 
         <Card className="flex flex-col flex-1">
           <CardHeader className="p-4 pb-2">
-            <Input
-              type="search"
-              placeholder="Search products by name or category..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              className="w-full"
-            />
+            <div className="relative">
+              <ScanLine className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search products by name, category, or barcode..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="w-full pl-9"
+              />
+            </div>
           </CardHeader>
           <CardContent className="p-4 pt-2 flex-1">
             <ScrollArea className="h-[calc(100vh-280px)]">
@@ -143,20 +379,10 @@ export function OrderInterface({ products }: OrderProps) {
                       product={product}
                       orderList={orderList}
                       onSelect={(prod) => {
-                        setIsOrdering(true);
-                        const exists = orderList.some((item) => item.id === prod.id);
-                        if (!exists) {
-                          const price = prod.price ?? 0;
-                          const cost = prod.cost ?? 0;
-                          setOrderList((prev) => [
-                            ...prev,
-                            {
-                              ...prod,
-                              amount: 1,
-                              subtotal: price,
-                              profit: price - cost,
-                            },
-                          ]);
+                        if (scanMode === "add") {
+                          handleAddToCart(prod);
+                        } else {
+                          handleDeductFromCart(prod);
                         }
                       }}
                     />
@@ -185,7 +411,7 @@ export function OrderInterface({ products }: OrderProps) {
               <ScrollArea className="h-full p-4">
                 {orderList.length === 0 ? (
                   <div className="py-12 text-center text-muted-foreground text-sm">
-                    Your cart is empty. Click a product to add it.
+                    Your cart is empty. Scan or select products to add.
                   </div>
                 ) : (
                   <div className="flex flex-col gap-3">
@@ -244,6 +470,26 @@ export function OrderInterface({ products }: OrderProps) {
           </Card>
         </div>
       )}
+
+      {/* Camera Viewfinder Modal */}
+      <CameraScannerModal
+        open={isCameraOpen}
+        onOpenChange={setIsCameraOpen}
+        onScan={handleBarcodeScan}
+        title="POS Camera Scanner"
+        description="Point camera at product barcode to add/deduct from cart."
+      />
+
+      {/* 3-Tier Rapid Registration Modal */}
+      <QuickRegisterModal
+        open={isQuickRegisterOpen}
+        onOpenChange={setIsQuickRegisterOpen}
+        barcode={activeScannedBarcode}
+        lookupData={activeLookupResult}
+        categories={existingCategories}
+        onSuccess={handleQuickProductRegistered}
+        context="pos"
+      />
     </div>
   );
 }
@@ -278,7 +524,14 @@ function ProductCard({
         <div className="flex justify-between items-start gap-2">
           <div className="min-w-0">
             <h4 className="font-semibold text-sm truncate">{product.name || "Unnamed Product"}</h4>
-            <p className="text-xs text-muted-foreground">{product.category || "Uncategorized"}</p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="text-xs text-muted-foreground">{product.category || "Uncategorized"}</span>
+              {product.barcode && (
+                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-muted text-muted-foreground">
+                  {product.barcode}
+                </span>
+              )}
+            </div>
           </div>
           <span className="font-bold text-sm shrink-0">{formatPHP(product.price)}</span>
         </div>
@@ -334,9 +587,12 @@ function OrderItemCard({
       <div className="flex justify-between items-start gap-2">
         <div className="min-w-0">
           <p className="font-medium text-sm truncate">{product.name || "Unnamed Product"}</p>
-          <p className="text-xs text-muted-foreground">
-            {formatPHP(price)} each
-          </p>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">{formatPHP(price)} each</span>
+            {product.barcode && (
+              <span className="text-[10px] font-mono text-muted-foreground">({product.barcode})</span>
+            )}
+          </div>
         </div>
         <span className="font-bold text-sm">
           {formatPHP(price * amount)}
