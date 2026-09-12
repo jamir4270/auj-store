@@ -41,18 +41,32 @@ export async function updateSession(request: NextRequest) {
   const user = data?.claims;
   const pathname = request.nextUrl.pathname;
 
-  const isAuthRoute = pathname.startsWith("/auth") || pathname.startsWith("/login");
+  // Handle any legacy /login visits by redirecting to root / (or /dashboard if logged in)
+  if (pathname === "/login") {
+    const url = request.nextUrl.clone();
+    url.pathname = user ? "/dashboard" : "/";
+    return NextResponse.redirect(url);
+  }
+
+  const authRoutes = [
+    "/sign-up",
+    "/sign-up-success",
+    "/forgot-password",
+    "/update-password",
+    "/error",
+  ];
+  const isAuthRoute = authRoutes.includes(pathname);
   const isPublicRoot = pathname === "/";
 
   // If not logged in and accessing protected operations
   if (!user && !isAuthRoute && !isPublicRoot) {
     const url = request.nextUrl.clone();
-    url.pathname = "/auth/login";
+    url.pathname = "/";
     return NextResponse.redirect(url);
   }
 
-  // If logged in and accessing login page
-  if (user && isAuthRoute) {
+  // If logged in and accessing login page or auth routes
+  if (user && (isAuthRoute || isPublicRoot)) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
