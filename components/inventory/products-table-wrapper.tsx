@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { getColumns } from "./_components/product-columns";
-import { ProductsTable } from "./_components/products-table";
+import { getColumns } from "./product-columns";
+import { ProductsTable } from "./products-table";
 import { Product } from "@/types/domain";
 
 interface ProductsTableProps {

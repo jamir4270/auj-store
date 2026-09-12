@@ -1,12 +1,12 @@
-import { DateTimeCard } from "./_components/date-time";
+import { DateTimeCard } from "@/components/dashboard/date-time";
 import { HistoryOrderItem, Product } from "@/types/domain";
 import { fetchOrderItemsWithDetails, fetchLowStockProducts, fetchOutOfStockProducts } from "@/lib/data";
-import { SummaryCards } from "./_components/summary-cards";
-import { TopProducts } from "./_components/top-products";
-import { OutOfStockProducts } from "./_components/out-of-stock-products";
-import { LowStockProducts } from "./_components/low-stock-products";
-import { calcTotals, getProductSalesCount } from "./utils";
-import { Charts } from "./_components/charts";
+import { SummaryCards } from "@/components/dashboard/summary-cards";
+import { TopProducts } from "@/components/dashboard/top-products";
+import { OutOfStockProducts } from "@/components/dashboard/out-of-stock-products";
+import { LowStockProducts } from "@/components/dashboard/low-stock-products";
+import { calcTotals, getProductSalesCount } from "@/lib/utils/dashboard";
+import { Charts } from "@/components/dashboard/charts";
 
 export default async function Dashboard() {
   const today = new Date();

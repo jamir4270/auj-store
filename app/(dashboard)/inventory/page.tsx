@@ -5,11 +5,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { AddNewProduct } from "./_components/add-product";
+import { AddNewProduct } from "@/components/inventory/add-product";
 import { fetchProducts, fetchCategories } from "@/lib/data";
 import { Product } from "@/types/domain";
 import { formatPHP } from "@/lib/utils/currency";
-import { ProductsTableWrapper } from "./models";
+import { ProductsTableWrapper } from "@/components/inventory/products-table-wrapper";
 import { Warehouse, PackageCheck, AlertTriangle, XCircle } from "lucide-react";
 
 export default async function Inventory() {
@@ -29,7 +29,6 @@ export default async function Inventory() {
   }
 
   const totalCount = products.length;
-  // Guard against division by zero (Audit 5.6)
   const in_stock_percentage = totalCount > 0 ? (in_stock_count / totalCount) * 100 : 0;
   const low_stock_percentage = totalCount > 0 ? (low_stock_count / totalCount) * 100 : 0;
   const out_of_stock_percentage = totalCount > 0 ? (out_of_stock_count / totalCount) * 100 : 0;

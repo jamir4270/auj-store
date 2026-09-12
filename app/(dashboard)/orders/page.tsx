@@ -1,5 +1,5 @@
 import { fetchProducts } from "@/lib/data";
-import { OrderInterface } from "./_components/order-page-interface";
+import { OrderInterface } from "@/components/orders/order-page-interface";
 import { ProductAtSale } from "@/types/domain";
 
 export default async function Orders() {

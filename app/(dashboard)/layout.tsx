@@ -1,13 +1,12 @@
 import { cookies } from "next/headers";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar, SidebarProp } from "@/components/layout/app-sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import {
   SidebarTrigger,
   SidebarProvider,
   SidebarInset,
 } from "@/components/ui/sidebar";
-import { SidebarProp } from "@/components/app-sidebar";
-import { ThemeSwitcher } from "@/components/theme-switcher";
+import { ThemeSwitcher } from "@/components/layout/theme-switcher";
 import "../globals.css";
 
 import {
